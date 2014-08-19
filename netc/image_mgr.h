@@ -45,7 +45,6 @@ namespace ygopro
         glbase::Texture card_image;
         unsigned int frame_buffer = 0;
         unsigned int card_buffer[2] = {0, 0};
-        unsigned int card_vao = 0;
         ZipArchive imageZip;
 	};
 

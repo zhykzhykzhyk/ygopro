@@ -287,6 +287,8 @@ namespace glbase {
         bool Use();
         void Unuse();
         void Unload();
+        void BindAttribLocation(int loc, const char* name);
+        void BindFragDataLocation(int loc, const char* name);
         void SetParam1i(const char* varname, int value);
         
     public:

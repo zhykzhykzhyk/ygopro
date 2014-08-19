@@ -43,27 +43,6 @@ namespace ygopro
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * 256 * 4 * 6, &index[0], GL_STATIC_DRAW);
-        glGenVertexArrays(1, &deck_vao);
-        glGenVertexArrays(1, &back_vao);
-        glGenVertexArrays(1, &misc_vao);
-        glGenVertexArrays(1, &result_vao);
-        for(int i = 0; i < 4; ++i) {
-            switch(i) {
-                case 0: glBindVertexArray(deck_vao); glBindBuffer(GL_ARRAY_BUFFER, deck_buffer); break;
-                case 1: glBindVertexArray(back_vao); glBindBuffer(GL_ARRAY_BUFFER, back_buffer); break;
-                case 2: glBindVertexArray(misc_vao); glBindBuffer(GL_ARRAY_BUFFER, misc_buffer); break;
-                case 3: glBindVertexArray(result_vao); glBindBuffer(GL_ARRAY_BUFFER, result_buffer); break;
-                default: break;
-            }
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-            glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-            glBindVertexArray(0);
-        }
         GLCheckError(__FILE__, __LINE__);
         limit[0] = ImageMgr::Get().GetTexture("limit0");
         limit[1] = ImageMgr::Get().GetTexture("limit1");
@@ -83,10 +62,6 @@ namespace ygopro
         glDeleteBuffers(1, &back_buffer);
         glDeleteBuffers(1, &misc_buffer);
         glDeleteBuffers(1, &result_buffer);
-        glDeleteVertexArrays(1, &deck_vao);
-        glDeleteVertexArrays(1, &back_vao);
-        glDeleteVertexArrays(1, &misc_vao);
-        glDeleteVertexArrays(1, &result_vao);
         GLCheckError(__FILE__, __LINE__);
     }
     
@@ -208,36 +183,46 @@ namespace ygopro
     
     void BuildScene::Draw() {
         glViewport(0, 0, scene_size.x, scene_size.y);
-        auto& shader = glbase::Shader::GetDefaultShader();
-        shader.Use();
-        shader.SetParam1i("texid", 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         // background
         ImageMgr::Get().GetRawBGTexture()->Bind();
-        glBindVertexArray(back_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, back_buffer);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
         GLCheckError(__FILE__, __LINE__);
         // miscs
         ImageMgr::Get().GetRawMiscTexture()->Bind();
-        glBindVertexArray(misc_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, misc_buffer);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 33 * 6 - 2, GL_UNSIGNED_SHORT, 0);
         GLCheckError(__FILE__, __LINE__);
         // cards
         ImageMgr::Get().GetRawCardTexture()->Bind();
         // result
         if(result_show_size) {
-            glBindVertexArray(result_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, result_buffer);
+            glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
             glDrawElements(GL_TRIANGLE_STRIP, result_show_size * 24 - 2, GL_UNSIGNED_SHORT, 0);
             GLCheckError(__FILE__, __LINE__);
         }
         // deck
         size_t deck_sz = current_deck.main_deck.size() + current_deck.extra_deck.size() + current_deck.side_deck.size();
         if(deck_sz > 0) {
-            glBindVertexArray(deck_vao);
+            glBindBuffer(GL_ARRAY_BUFFER, deck_buffer);
+            glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
             glDrawElements(GL_TRIANGLE_STRIP, deck_sz * 24 - 2, GL_UNSIGNED_SHORT, 0);
+            GLCheckError(__FILE__, __LINE__);
         }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         GLCheckError(__FILE__, __LINE__);
-        glBindVertexArray(0);
-        shader.Unuse();
     }
     
     void BuildScene::SetSceneSize(v2i sz) {

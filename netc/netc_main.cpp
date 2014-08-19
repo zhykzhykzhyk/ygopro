@@ -25,10 +25,8 @@ int main(int argc, char* argv[]) {
 	if(fsaa)
 		glfwWindowHint(GLFW_SAMPLES, fsaa);
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     auto mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     GLFWwindow* window = glfwCreateWindow(width, height, "Ygopro", nullptr, nullptr);
     if (!window) {
@@ -141,6 +139,7 @@ int main(int argc, char* argv[]) {
         glfwSwapInterval(1);
     else
         glfwSwapInterval(0);
+    
     while (!glfwWindowShouldClose(window)) {
         SceneMgr::Get().CheckFrameRate();
         SceneMgr::Get().InitDraw();

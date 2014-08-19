@@ -15,9 +15,6 @@ namespace sgui
         if(vbo)
             glDeleteBuffers(1, &vbo);
         vbo = 0;
-        if(vao)
-            glDeleteVertexArrays(1, &vao);
-        vao = 0;
     }
     
     bool SGWidget::CheckInside(v2i pos) {
@@ -180,22 +177,10 @@ namespace sgui
     
     SGTextBase::SGTextBase() {
         glGenBuffers(1, &tbo);
-        glGenVertexArrays(1, &tao);
-        glBindVertexArray(tao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
     }
     
     SGTextBase::~SGTextBase() {
         glDeleteBuffers(1, &tbo);
-        glDeleteVertexArrays(1, &tao);
     }
     
     void SGTextBase::SetFont(glbase::Font* ft) {
@@ -364,29 +349,19 @@ namespace sgui
         if(vert_size == 0)
             return;
         guiRoot.BindTexture(&font->GetTexture());
-        glBindVertexArray(tao);
+        glBindBuffer(GL_ARRAY_BUFFER, tbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, vert_size * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
     }
     
     SGSpriteBase::SGSpriteBase() {
         glGenBuffers(1, &imgbo);
-        glGenVertexArrays(1, &imgao);
-        glBindVertexArray(imgao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, imgbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
     }
     
     SGSpriteBase::~SGSpriteBase() {
         glDeleteBuffers(1, &imgbo);
-        glDeleteVertexArrays(1, &imgao);
     }
     
     void SGSpriteBase::SetImage(glbase::Texture* img, recti varea, unsigned int cl) {
@@ -477,9 +452,11 @@ namespace sgui
         if(texcoords.size() > 1)
             voffset = ((int)(guiRoot.GetTime() / frame_time) % texcoords.size() * verts.size()) * sizeof(glbase::v2ct);
         guiRoot.BindTexture(img_texture);
-        glBindVertexArray(imgao);
+        glBindBuffer(GL_ARRAY_BUFFER, imgbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, verts.size() / 4 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
     }
     
     SGWidgetContainer::~SGWidgetContainer() {
@@ -763,17 +740,28 @@ namespace sgui
     }
     
     void SGGUIRoot::Draw() {
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
         glDisable(GL_DEPTH_TEST);
-        gui_shader->Use();
-        gui_shader->SetParam1i("texID", 0);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_INDEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glLoadIdentity();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         for(auto& iter : children)
             if(iter->IsVisible())
                 iter->Draw();
         cur_texture = nullptr;
         scissor_stack.clear();
-        gui_shader->Unuse();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glPopClientAttrib();
+        glPopAttrib();
     }
     
     void SGGUIRoot::ObjectDragingBegin(std::shared_ptr<SGWidget> dr, MouseMoveEvent evt) {
@@ -872,7 +860,6 @@ namespace sgui
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * 1024 * 4 * 6, &index[0], GL_STATIC_DRAW);
         start_time = std::chrono::system_clock::now().time_since_epoch().count();
-        gui_shader = &glbase::Shader::GetDefaultShader();
         return true;
     }
     
@@ -1022,9 +1009,11 @@ namespace sgui
     void SGPanel::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 9 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         guiRoot.BeginScissor(recti{position_abs.x, position_abs.y, size_abs.x, size_abs.y});
         for(auto& iter : children)
             if(iter->IsVisible())
@@ -1046,17 +1035,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 36, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -1089,17 +1067,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 36, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -1154,9 +1121,11 @@ namespace sgui
     void SGWindow::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 9 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         DrawText();
         guiRoot.BeginScissor({position_abs.x, position_abs.y, size_abs.x, size_abs.y});
         for(auto& iter : children)
@@ -1489,15 +1458,19 @@ namespace sgui
         UpdateTextVertex();
         if(icon_size) {
             guiRoot.BindGuiTexture();
-            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
             glDrawElements(GL_TRIANGLE_STRIP, icon_size * 6 - 2, GL_UNSIGNED_SHORT, 0);
-            glBindVertexArray(0);
         }
         if(vert_size) {
             guiRoot.BindTexture(&font->GetTexture());
-            glBindVertexArray(tao);
+            glBindBuffer(GL_ARRAY_BUFFER, tbo);
+            glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
             glDrawElements(GL_TRIANGLE_STRIP, vert_size * 6 - 2, GL_UNSIGNED_SHORT, 0);
-            glBindVertexArray(0);
         }
     }
     
@@ -1514,17 +1487,6 @@ namespace sgui
         ptr->SetText(t, guiRoot.GetDefaultInt("font_color"));
         ptr->PostResize(false, true);
         glGenBuffers(1, &ptr->vbo);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -1612,9 +1574,11 @@ namespace sgui
             guiRoot.BindTexture(tex_texture);
         else
             guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 9 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         DrawImage();
         DrawText();
     }
@@ -1674,17 +1638,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 36, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -1817,9 +1770,11 @@ namespace sgui
     void SGCheckbox::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         DrawText();
     }
     
@@ -1888,17 +1843,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 12, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -2054,17 +1998,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 12, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -2140,12 +2073,14 @@ namespace sgui
     void SGScrollBar::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         if(slider_length)
             glDrawElements(GL_TRIANGLE_STRIP, 4 * 6 - 2, GL_UNSIGNED_SHORT, 0);
         else
             glDrawElements(GL_TRIANGLE_STRIP, 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
     }
     
     void SGScrollBar::SetRange(float minv, float maxv, float cur) {
@@ -2340,17 +2275,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 16, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -2418,13 +2342,15 @@ namespace sgui
         }
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         double tm = guiRoot.GetTime();
         if(read_only || !focus || sel_start != sel_end || ((int)((tm - cursor_time) / 0.5) % 2))
             glDrawElements(GL_TRIANGLE_STRIP, 9 * 6 - 2, GL_UNSIGNED_SHORT, 0);
         else
             glDrawElements(GL_TRIANGLE_STRIP, 10 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         int tw = size_abs.x - text_area.left - text_area.width;
         int th = size_abs.y - text_area.top - text_area.height;
         for(auto chd : children)
@@ -2453,9 +2379,11 @@ namespace sgui
     void SGTextEdit::DrawSelectRegion() {
         UpdateSelRegion();
         if(sel_start != sel_end) {
-            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
             glDrawElements(GL_TRIANGLE_STRIP, 6 - 2, GL_UNSIGNED_SHORT, (GLvoid*)(uintptr_t)(sizeof(unsigned short) * 60));
-            glBindVertexArray(0);
         }
     }
     
@@ -2569,17 +2497,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 44, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -2890,17 +2807,21 @@ namespace sgui
     void SGListBox::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 9 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         int tw = size_abs.x - text_area.left - text_area.width;
         int th = size_abs.y - text_area.top - text_area.height;
         for(auto chd : children)
             chd->Draw();
         guiRoot.BeginScissor(recti{position_abs.x + text_area.left, position_abs.y + text_area.top, tw, th});
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, item_count * 2 * 6 - 2, GL_UNSIGNED_SHORT, (GLvoid*)(uintptr_t)(sizeof(unsigned short) * 54));
-        glBindVertexArray(0);
         DrawText();
         guiRoot.EndScissor();
     }
@@ -3153,17 +3074,6 @@ namespace sgui
         ptr->line_spacing = listbox_config.int_config["spacing"];
         ptr->text_offset = 0;
         glGenBuffers(1, &ptr->vbo);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         auto sarea = listbox_config.tex_config["scroll_area"];
         auto scr = SGScrollBar::Create(ptr, {0, 0}, {0, 0}, false);
         scr->SetPosition({-sarea.left, sarea.top}, {1.0f, 0.0f});
@@ -3240,17 +3150,6 @@ namespace sgui
             ptr->line_spacing = listbox_config.int_config["spacing"];
             ptr->text_offset = 0;
             glGenBuffers(1, &ptr->vbo);
-            glGenVertexArrays(1, &ptr->vao);
-            glBindVertexArray(ptr->vao);
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glEnableVertexAttribArray(2);
-            glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-            glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-            glBindVertexArray(0);
             auto sarea = listbox_config.tex_config["scroll_area"];
             auto scr = SGScrollBar::Create(ptr, {0, 0}, {0, 0}, false);
             scr->SetPosition({-sarea.left, sarea.top}, {1.0f, 0.0f});
@@ -3313,9 +3212,11 @@ namespace sgui
     void SGComboBox::Draw() {
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         glDrawElements(GL_TRIANGLE_STRIP, 10 * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         int tw = size_abs.x - text_area.left - text_area.width;
         int th = size_abs.y - text_area.top - text_area.height;
         guiRoot.BeginScissor(recti{position_abs.x + text_area.left, position_abs.y + text_area.top, tw, th});
@@ -3456,17 +3357,6 @@ namespace sgui
         glGenBuffers(1, &ptr->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glbase::v2ct) * 40, nullptr, GL_DYNAMIC_DRAW);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else
@@ -3611,10 +3501,12 @@ namespace sgui
         EvaluateSize();
         UpdateVertices();
         guiRoot.BindGuiTexture();
-        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
         guiRoot.BeginScissor(recti{position_abs.x, position_abs.y, size_abs.x, size_abs.y});
         glDrawElements(GL_TRIANGLE_STRIP, (9 + item_count * 3) * 6 - 2, GL_UNSIGNED_SHORT, 0);
-        glBindVertexArray(0);
         DrawText();
         guiRoot.EndScissor();
         guiRoot.BeginScissor(recti{position_abs.x, position_abs.y + tab_height, size_abs.x, size_abs.y - tab_height});
@@ -3950,17 +3842,6 @@ namespace sgui
         ptr->tab_ol = tab_config.int_config["tab_offsetl"];
         ptr->tab_or = tab_config.int_config["tab_offsetr"];
         glGenBuffers(1, &ptr->vbo);
-        glGenVertexArrays(1, &ptr->vao);
-        glBindVertexArray(ptr->vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, ptr->vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiRoot.GetIndexBuffer());
-        glBindVertexArray(0);
         if(p != nullptr)
             p->AddChild(ptr);
         else

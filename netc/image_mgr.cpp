@@ -52,15 +52,11 @@ namespace ygopro
                         card_image.Bind();
                         glBindBuffer(GL_ARRAY_BUFFER, card_buffer[0]);
                         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glbase::v2ct) * 4, &frame_verts);
-                        auto& shader = glbase::Shader::GetDefaultShader();
-                        shader.Use();
-                        shader.SetParam1i("texID", 0);
-                        glBindVertexArray(card_vao);
-                        GLCheckError(__FILE__, __LINE__);
+                        glVertexPointer(2, GL_FLOAT, sizeof(glbase::v2ct), 0);
+                        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(glbase::v2ct), (const GLvoid*)(uintptr_t)glbase::v2ct::color_offset);
+                        glTexCoordPointer(2, GL_FLOAT, sizeof(glbase::v2ct), (const GLvoid*)(uintptr_t)(glbase::v2ct::tex_offset));
+                        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, card_buffer[1]);
                         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-                        GLCheckError(__FILE__, __LINE__);
-                        glBindVertexArray(0);
-                        shader.Unuse();
                         glBindTexture(GL_TEXTURE_2D, 0);
                         glBindFramebuffer(GL_FRAMEBUFFER, 0);
                     } else {
@@ -170,24 +166,12 @@ namespace ygopro
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, card_buffer[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glGenVertexArrays(1, &card_vao);
-        glBindVertexArray(card_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, card_buffer[0]);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), 0);
-        glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::color_offset);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glbase::v2ct), (const GLvoid*)glbase::v2ct::tex_offset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, card_buffer[1]);
-        glBindVertexArray(0);
         imageZip.Load(image_pack);
     }
 
     void ImageMgr::UninitTextures() {
         glDeleteFramebuffers(1, &frame_buffer);
         glDeleteBuffers(2, card_buffer);
-        glDeleteVertexArrays(1, &card_vao);
         card_texture.Unload();
         misc_texture.Unload();
         bg_texture.Unload();

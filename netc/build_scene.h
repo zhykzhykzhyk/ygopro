@@ -100,10 +100,6 @@ namespace ygopro
         unsigned int back_buffer = 0;
         unsigned int misc_buffer = 0;
         unsigned int result_buffer = 0;
-        unsigned int deck_vao = 0;
-        unsigned int back_vao = 0;
-        unsigned int misc_vao = 0;
-        unsigned int result_vao = 0;
         bool update_bg = true;
         bool update_card = true;
         bool update_misc = true;
