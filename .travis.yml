@@ -1,0 +1,14 @@
+language: c
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - brew update
+  - brew install premake
+
+install: 
+  - premake4 gmake
+  - cd build
+  - make config=release
