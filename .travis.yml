@@ -12,3 +12,7 @@ install:
   - premake4 gmake
   - cd build
   - make config=release
+
+branches:
+  only:
+  - master
