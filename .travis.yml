@@ -4,8 +4,12 @@ os:
   - linux
   - osx
 
+git:
+  submodules: false
+
 before_install:
   - echo SSH_KEY | ssh-add -
+  - git submodule update --init --recursive
   - brew update
   - brew install premake
 
