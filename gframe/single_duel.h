@@ -32,11 +32,11 @@ public:
 	void DuelEndProc();
 	void WaitforResponse(int playerid);
 	void RefreshMzone(int player, int flag = 0x81fff, int use_cache = 1);
-	void RefreshSzone(int player, int flag = 0x81fff, int use_cache = 1);
-	void RefreshHand(int player, int flag = 0x181fff, int use_cache = 1);
+	void RefreshSzone(int player, int flag = 0x681fff, int use_cache = 1);
+	void RefreshHand(int player, int flag = 0x781fff, int use_cache = 1);
 	void RefreshGrave(int player, int flag = 0x81fff, int use_cache = 1);
 	void RefreshExtra(int player, int flag = 0x81fff, int use_cache = 1);
-	void RefreshSingle(int player, int location, int sequence, int flag = 0x181fff);
+	void RefreshSingle(int player, int location, int sequence, int flag = 0x781fff);
 	
 	static int MessageHandler(long fduel, int type);
 	static void SingleTimer(evutil_socket_t fd, short events, void* arg);
@@ -52,6 +52,7 @@ protected:
 	Replay last_replay;
 	bool match_mode;
 	int match_kill;
+	bool game_started;
 	unsigned char duel_count;
 	unsigned char tp_player;
 	unsigned char match_result[3];

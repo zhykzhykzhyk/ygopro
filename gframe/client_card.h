@@ -17,7 +17,9 @@ struct CardData {
 	unsigned int attribute;
 	unsigned int race;
 	int attack;
-	int defence;
+	int defense;
+	unsigned int lscale;
+	unsigned int rscale;
 };
 struct CardDataC {
 	unsigned int code;
@@ -28,7 +30,9 @@ struct CardDataC {
 	unsigned int attribute;
 	unsigned int race;
 	int attack;
-	int defence;
+	int defense;
+	unsigned int lscale;
+	unsigned int rscale;
 	unsigned int ot;
 	unsigned int category;
 };
@@ -37,7 +41,7 @@ struct CardString {
 	wchar_t* text;
 	wchar_t* desc[16];
 };
-typedef std::unordered_map<unsigned int, CardDataC>::iterator code_pointer;
+typedef std::unordered_map<unsigned int, CardDataC>::const_iterator code_pointer;
 
 class ClientCard {
 public:
@@ -59,7 +63,9 @@ public:
 	bool is_showtarget;
 	bool is_highlighting;
 	bool is_reversed;
+	bool is_conti;
 	u32 code;
+	u32 chain_code;
 	u32 alias;
 	u32 type;
 	u32 level;
@@ -67,9 +73,11 @@ public:
 	u32 attribute;
 	u32 race;
 	s32 attack;
-	s32 defence;
+	s32 defense;
 	s32 base_attack;
-	s32 base_defence;
+	s32 base_defense;
+	u32 lscale;
+	u32 rscale;
 	u32 reason;
 	u32 select_seq;
 	u8 owner;
@@ -95,6 +103,8 @@ public:
 	wchar_t atkstring[16];
 	wchar_t defstring[16];
 	wchar_t lvstring[16];
+	wchar_t lscstring[16];
+	wchar_t rscstring[16];
 
 	ClientCard();
 	void SetCode(int code);
@@ -102,6 +112,9 @@ public:
 	void ClearTarget();
 	static bool client_card_sort(ClientCard* c1, ClientCard* c2);
 	static bool deck_sort_lv(code_pointer l1, code_pointer l2);
+	static bool deck_sort_atk(code_pointer l1, code_pointer l2);
+	static bool deck_sort_def(code_pointer l1, code_pointer l2);
+	static bool deck_sort_name(code_pointer l1, code_pointer l2);
 };
 
 }

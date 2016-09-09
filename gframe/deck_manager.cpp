@@ -128,7 +128,7 @@ void DeckManager::LoadDeck(Deck& deck, int* dbuf, int mainc, int sidec) {
 		if(cd.type & TYPE_TOKEN)
 			continue;
 		else if(cd.type & 0x802040 && deck.extra.size() < 15) {
-			deck.extra.push_back(dataManager.GetCodePointer(code));
+			deck.extra.push_back(dataManager.GetCodePointer(code));	//verified by GetData()
 		} else if(deck.main.size() < 60) {
 			deck.main.push_back(dataManager.GetCodePointer(code));
 		}
@@ -140,7 +140,7 @@ void DeckManager::LoadDeck(Deck& deck, int* dbuf, int mainc, int sidec) {
 		if(cd.type & TYPE_TOKEN)
 			continue;
 		if(deck.side.size() < 15)
-			deck.side.push_back(dataManager.GetCodePointer(code));
+			deck.side.push_back(dataManager.GetCodePointer(code));	//verified by GetData()
 	}
 }
 bool DeckManager::LoadSide(Deck& deck, int* dbuf, int mainc, int sidec) {
@@ -231,5 +231,18 @@ bool DeckManager::SaveDeck(Deck& deck, const wchar_t* name) {
 		fprintf(fp, "%d\n", deck.side[i]->first);
 	fclose(fp);
 	return true;
+}
+bool DeckManager::DeleteDeck(Deck& deck, const wchar_t* name) {
+	wchar_t file[64];
+	myswprintf(file, L"./deck/%ls.ydk", name);
+#ifdef WIN32
+	BOOL result = DeleteFileW(file);
+	return !!result;
+#else
+	char filefn[256];
+	BufferIO::EncodeUTF8(file, filefn);
+	int result = unlink(filefn);
+	return result == 0;
+#endif
 }
 }

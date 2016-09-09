@@ -54,7 +54,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					inet_ntop(AF_INET, &(((struct sockaddr_in *)servinfo->ai_addr)->sin_addr), ip, 20);
 				freeaddrinfo(servinfo);
 			#else
-				int status;
 				char hostname[100];
 				char ip[20];
 				const wchar_t* pstr = mainGame->ebJoinIP->getText();
@@ -165,19 +164,21 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				if(!ReplayMode::cur_replay.OpenReplay(mainGame->lstReplayList->getListItem(mainGame->lstReplayList->getSelected())))
 					break;
-				mainGame->imgCard->setImage(imageManager.tCover);
+				mainGame->imgCard->setImage(imageManager.tCover[0]);
 				mainGame->wCardImg->setVisible(true);
 				mainGame->wInfos->setVisible(true);
 				mainGame->wReplay->setVisible(true);
 				mainGame->stName->setText(L"");
 				mainGame->stInfo->setText(L"");
 				mainGame->stDataInfo->setText(L"");
+				mainGame->stSetName->setText(L"");
 				mainGame->stText->setText(L"");
 				mainGame->scrCardText->setVisible(false);
 				mainGame->wReplayControl->setVisible(true);
 				mainGame->btnReplayStart->setVisible(false);
 				mainGame->btnReplayPause->setVisible(true);
 				mainGame->btnReplayStep->setVisible(false);
+				mainGame->btnReplayUndo->setVisible(false);
 				mainGame->wPhase->setVisible(true);
 				mainGame->dField.panel = 0;
 				mainGame->dField.hovered_card = 0;
@@ -219,6 +220,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->wCardImg->setVisible(true);
 				mainGame->wDeckEdit->setVisible(true);
 				mainGame->wFilter->setVisible(true);
+				mainGame->wSort->setVisible(true);
+				mainGame->btnLeaveGame->setVisible(true);
+				mainGame->btnLeaveGame->setText(dataManager.GetSysString(1306));
 				mainGame->btnSideOK->setVisible(false);
 				mainGame->deckBuilder.filterList = deckManager._lfList[0].content;
 				mainGame->cbDBLFList->setSelected(0);
@@ -227,19 +231,23 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->cbAttribute->setSelected(0);
 				mainGame->cbRace->setSelected(0);
 				mainGame->ebAttack->setText(L"");
-				mainGame->ebDefence->setText(L"");
+				mainGame->ebDefense->setText(L"");
 				mainGame->ebStar->setText(L"");
+				mainGame->ebScale->setText(L"");
 				mainGame->cbCardType2->setEnabled(false);
 				mainGame->cbAttribute->setEnabled(false);
 				mainGame->cbRace->setEnabled(false);
 				mainGame->ebAttack->setEnabled(false);
-				mainGame->ebDefence->setEnabled(false);
+				mainGame->ebDefense->setEnabled(false);
 				mainGame->ebStar->setEnabled(false);
+				mainGame->ebScale->setEnabled(false);
 				mainGame->deckBuilder.filter_effect = 0;
 				mainGame->deckBuilder.result_string[0] = L'0';
 				mainGame->deckBuilder.result_string[1] = 0;
 				mainGame->deckBuilder.results.clear();
 				mainGame->deckBuilder.is_draging = false;
+				mainGame->deckBuilder.is_deleting = false;
+				mainGame->deckBuilder.is_clearing = false;
 				mainGame->device->setEventReceiver(&mainGame->deckBuilder);
 				for(int i = 0; i < 32; ++i)
 					mainGame->chkCategory[i]->setChecked(false);
@@ -307,7 +315,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						break;
 					}
 					BufferIO::CopyWStr(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected()),
-					                   mainGame->gameConf.lastdeck, 20);
+					                   mainGame->gameConf.lastdeck, 64);
 					char deckbuf[1024];
 					char* pdeck = deckbuf;
 					BufferIO::WriteInt32(pdeck, deckManager.current_deck.main.size() + deckManager.current_deck.extra.size());
@@ -364,12 +372,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 	case irr::EET_KEY_INPUT_EVENT: {
 		switch(event.KeyInput.Key) {
 		case irr::KEY_KEY_R: {
-			if(!event.KeyInput.PressedDown)
+			if(!event.KeyInput.PressedDown && !mainGame->HasFocus(EGUIET_EDIT_BOX))
 				mainGame->textFont->setTransparency(true);
 			break;
 		}
 		case irr::KEY_ESCAPE: {
-			mainGame->device->minimizeWindow();
+			if(!mainGame->HasFocus(EGUIET_EDIT_BOX))
+				mainGame->device->minimizeWindow();
 			break;
 		}
 		default: break;

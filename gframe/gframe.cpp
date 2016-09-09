@@ -27,16 +27,22 @@ int main(int argc, char* argv[]) {
 		 * -d: deck edit
 		 * -r: replay */
 		if(argv[i][0] == '-' && argv[i][1] == 'e') {
+#ifdef _WIN32
+			wchar_t fname[260];
+			MultiByteToWideChar(CP_ACP, 0, &argv[i][2], -1, fname, 260);
+			char fname2[260];
+			BufferIO::EncodeUTF8(fname, fname2);
+			ygo::dataManager.LoadDB(fname2);
+#else
 			ygo::dataManager.LoadDB(&argv[i][2]);
+#endif
 		} else if(!strcmp(argv[i], "-j") || !strcmp(argv[i], "-d") || !strcmp(argv[i], "-r") || !strcmp(argv[i], "-s")) {
 			exit_on_return = true;
 			irr::SEvent event;
 			event.EventType = irr::EET_GUI_EVENT;
 			event.GUIEvent.EventType = irr::gui::EGET_BUTTON_CLICKED;
 			if(!strcmp(argv[i], "-j")) {
-				event.GUIEvent.Caller = ygo::mainGame->btnLanMode;
-				ygo::mainGame->device->postEventFromUser(event);
-				//TODO: wait for wLanWindow show. if network connection faster than wLanWindow, wLanWindow will still show on duel scene.
+				ygo::mainGame->HideElement(ygo::mainGame->wMainMenu);
 				event.GUIEvent.Caller = ygo::mainGame->btnJoinHost;
 				ygo::mainGame->device->postEventFromUser(event);
 			} else if(!strcmp(argv[i], "-d")) {

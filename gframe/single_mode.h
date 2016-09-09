@@ -13,8 +13,7 @@ private:
 	static long pduel;
 	static bool is_closing;
 	static bool is_continuing;
-	static wchar_t event_string[256];
-	
+
 public:
 	static bool StartPlay();
 	static void StopPlay(bool is_exiting = false);
@@ -22,14 +21,15 @@ public:
 	static int SinglePlayThread(void* param);
 	static bool SinglePlayAnalyze(char* msg, unsigned int len);
 	
-	static void SinglePlayRefresh(int flag = 0x181fff);
-	static void SinglePlayRefreshHand(int player, int flag = 0x181fff);
+	static void SinglePlayRefresh(int flag = 0x781fff);
+	static void SinglePlayRefreshHand(int player, int flag = 0x781fff);
 	static void SinglePlayRefreshGrave(int player, int flag = 0x181fff);
 	static void SinglePlayRefreshDeck(int player, int flag = 0x181fff);
 	static void SinglePlayRefreshExtra(int player, int flag = 0x181fff);
-	static void SinglePlayRefreshSingle(int player, int location, int sequence, int flag = 0x181fff);
+	static void SinglePlayRefreshSingle(int player, int location, int sequence, int flag = 0x781fff);
 	static void SinglePlayReload();
 
+	static byte* ScriptReader(const char* script_name, int* slen);
 	static int MessageHandler(long fduel, int type);
 };
 

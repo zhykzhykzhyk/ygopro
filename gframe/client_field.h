@@ -36,34 +36,43 @@ public:
 	std::vector<ClientCard*> reposable_cards;
 	std::vector<ClientCard*> activatable_cards;
 	std::vector<ClientCard*> attackable_cards;
+	std::vector<ClientCard*> conti_cards;
 	std::vector<int> activatable_descs;
+	std::set<int> reset_descs;
 	std::vector<int> select_options;
 	std::vector<ChainInfo> chains;
+	int extra_p_count[2];
 	
 	size_t selected_option;
 	ClientCard* attacker;
 	ClientCard* attack_target;
-	int disabled_field;
-	int selectable_field;
-	int selected_field;
+	unsigned int disabled_field;
+	unsigned int selectable_field;
+	unsigned int selected_field;
 	int select_min;
 	int select_max;
+	int must_select_count;
 	int select_sumval;
 	int select_cancelable;
 	int select_mode;
 	bool select_ready;
 	int announce_count;
+	int declarable_type;
 	int select_counter_count;
 	int select_counter_type;
 	std::vector<ClientCard*> selectable_cards;
 	std::vector<ClientCard*> selected_cards;
 	std::set<ClientCard*> selectsum_cards;
 	std::vector<ClientCard*> selectsum_all;
+	std::vector<ClientCard*> display_cards;
 	std::vector<int> sort_list;
+	std::map<int, int> player_desc_hints[2];
 	bool grave_act;
 	bool remove_act;
 	bool deck_act;
 	bool extra_act;
+	bool pzone_act[2];
+	bool conti_act;
 	bool chain_forced;
 	ChainInfo current_chain;
 	bool last_chain;
@@ -80,7 +89,9 @@ public:
 	void ClearCommandFlag();
 	void ClearSelect();
 	void ClearChainSelect();
-	void ShowSelectCard(bool buttonok = false);
+	void ShowSelectCard(bool buttonok = false, bool chain = false);
+	void ShowChainCard();
+	void ShowLocationCard();
 	void ReplaySwap();
 	void RefreshAllCards();
 	
@@ -88,12 +99,15 @@ public:
 	void GetCardLocation(ClientCard* pcard, irr::core::vector3df* t, irr::core::vector3df* r, bool setTrans = false);
 	void MoveCard(ClientCard* pcard, int frame);
 	void FadeCard(ClientCard* pcard, int alpha, int frame);
+	bool ShowSelectSum(bool panelmode);
 	bool CheckSelectSum();
 	bool check_min(std::set<ClientCard*>& left, std::set<ClientCard*>::iterator index, int min, int max);
-	bool check_sel_sum_s(std::set<ClientCard*>& left, int index, int acc);
-	void check_sel_sum_t(std::set<ClientCard*>& left, int acc);
-	bool check_sum(std::set<ClientCard*>& testlist, std::set<ClientCard*>::iterator index, int acc, int count);
+	bool check_sel_sum_s(const std::set<ClientCard*>& left, int index, int acc);
+	void check_sel_sum_t(const std::set<ClientCard*>& left, int acc);
+	bool check_sum(std::set<ClientCard*>::const_iterator index, std::set<ClientCard*>::const_iterator end, int acc, int count);
 	
+	void UpdateDeclarableCode(bool enter);
+
 	irr::gui::IGUIElement* panel;
 	std::vector<int> ancard;
 	int hovered_controler;
@@ -103,17 +117,23 @@ public:
 	int command_location;
 	size_t command_sequence;
 	ClientCard* hovered_card;
+	int hovered_player;
 	ClientCard* clicked_card;
 	ClientCard* command_card;
 	ClientCard* highlighting_card;
 	int list_command;
-	wchar_t formatBuffer[2048];
 
 	virtual bool OnEvent(const irr::SEvent& event);
 	void GetHoverField(int x, int y);
 	void ShowMenu(int flag, int x, int y);
+	void UpdateChainButtons();
+	void SetResponseSelectedCards() const;
 };
 
 }
+
+//special cards
+#define CARD_MARINE_DOLPHIN	78734254
+#define CARD_TWINKLE_MOSS	13857930
 
 #endif //CLIENT_FIELD_H
