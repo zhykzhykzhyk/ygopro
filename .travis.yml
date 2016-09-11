@@ -1,20 +1,19 @@
 language: c
 os:
-- linux
-- osx
+  - linux
+  - osx
 git:
   submodules: false
 before_install:
-- openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv
-  -in ssh-key.enc -out ~/.ssh/id_ecdsa -d
-- chmod 600 ~/.ssh/id_ecdsa
-- git submodule update --init --recursive
-- brew update
-- brew install premake
+  - openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv -in ssh-key.enc -out ~/.ssh/id_ecdsa -d
+  - chmod 600 ~/.ssh/id_ecdsa
+  - git submodule update --init --recursive
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install premake ; fi
 install:
-- premake4 gmake
-- cd build
-- make config=release
+  - premake4 gmake
+  - cd build
+  - make config=release
 branches:
   only:
     - master
