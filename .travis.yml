@@ -4,6 +4,7 @@ os:
   - osx
 sudo: required
 dist: trusty
+osx_image: xcode7.1
 git:
   submodules: false
 addons:
@@ -26,7 +27,7 @@ before_install:
   - git submodule update --init --recursive
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install premake freetype libevent sqlite irrlicht lua; fi
-install:
+script:
   - premake4 gmake
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /etc/ld.so.conf.d/*; sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
