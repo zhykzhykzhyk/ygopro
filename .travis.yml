@@ -1,4 +1,4 @@
-language: c
+language: cpp
 os:
   - linux
   - osx
@@ -23,6 +23,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv -in ssh-key.enc -out $HOME/.ssh/id_ecdsa -d
   - chmod 600 $HOME/.ssh/id_ecdsa
   - git submodule update --init --recursive
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ln -s /usr/lib/x86_64-linux-gnu/liblua5.2.so /usr/lib/liblua.so; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install premake freetype libevent sqlite irrlicht lua; fi
 install:
