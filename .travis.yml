@@ -40,10 +40,12 @@ script:
 deploy:
   provider: releases
   file: "ygopro.tar.xz"
-  api_key: $GH_TOKEN
+  api_key:
+      secure: "hJ0p7PrsahA+e8szAnepJC+D02cobtFWZtC2qH2Aljr4RGP0Mi/4p7k9m+Ob27NBaGA1wg0B6W+SNX3uEAUkr5upS+/VRhb0i34zkFiYw30KpufXjQ0TiWGJfozV97T4UzMFtl+dYh/WLMO+QTwQK9EE0FLwTWWn6aXrNPDZYQA="
   skip_cleanup: true
   on:
     tags: true
 branches:
   only:
     - master
+    - /v\d+\.\d+[a-z]/
