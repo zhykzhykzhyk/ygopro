@@ -29,12 +29,15 @@ script:
   - premake4 gmake
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
+  - env
   - make config=release
   - cd ..
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./ ./; strip ygopro.app/Contents/MacOS/ygopro; fi
   - wget https://mycard.moe/ygopro/cards.cdb
   - mkdir -p pics; wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv build/release/ygopro ./; strip ygopro; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then XZ_OPT=-9e tar -Jcvf ygopro.tar.xz LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then XZ_OPT=-9e tar -Jcvf ygopro.tar.xz ygopro LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then XZ_OPT=-9e tar -Jcvf ygopro.tar.xz ygopro.app LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
 deploy:
   provider: releases
   file: "ygopro.tar.xz"
