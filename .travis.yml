@@ -1,23 +1,20 @@
 language: c
-
 os:
-  - linux
-  - osx
-
+- linux
+- osx
 git:
   submodules: false
-
 before_install:
-  - echo SSH_KEY | ssh-add -
-  - git submodule update --init --recursive
-  - brew update
-  - brew install premake
-
-install: 
-  - premake4 gmake
-  - cd build
-  - make config=release
-
+- openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv
+  -in ssh-key.enc -out ~/.ssh/id_ecdsa -d
+- chmod 600 ~/.ssh/id_ecdsa
+- git submodule update --init --recursive
+- brew update
+- brew install premake
+install:
+- premake4 gmake
+- cd build
+- make config=release
 branches:
   only:
-  - master
+    - master
