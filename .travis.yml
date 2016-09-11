@@ -32,7 +32,7 @@ script:
   - make config=release
   - cd ..
   - wget https://mycard.moe/cards.cdb
-  - mkdir -p pics; wget https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar zfx --strip-components 1 -C pics -
+  - mkdir -p pics; wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components 1 -C pics zfx -
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; mv build/release/ygopro ./; strip ygopro; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; XZ_OPT=-9e tar -Jcvf ygopro.tar.xz LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
 deploy:
