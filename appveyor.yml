@@ -42,9 +42,9 @@ install:
   # premake
   - premake5 vs2015
   - dir
-platform: 
-  - x86
-  - x64
+#platform: 
+#  - x86
+#  - x64
 configuration: Release
 build: 
     project: build/ygo.sln
