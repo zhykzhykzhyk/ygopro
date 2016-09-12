@@ -40,7 +40,8 @@ install:
   # premake
   - premake5 vs2015
   - dir
-
+build: 
+    project: build/ygo.sln
 after_build:
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
   - dir
