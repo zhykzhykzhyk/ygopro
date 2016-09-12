@@ -41,7 +41,7 @@ install:
   
   # premake
   #- premake5 vs2015
-  - premake4 vs2013
+  - premake4 vs2012
   
   - type irrlicht\source\Irrlicht\jpeglib\jmemdos.c
   # check files, for debug
