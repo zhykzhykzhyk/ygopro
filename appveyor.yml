@@ -23,9 +23,9 @@ install:
   - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
   - move libevent-2.0.22-stable event
   - move event\WIN32-Code\* event\
-  - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.3.3.tar.gz
-  - 7z x lua-5.3.3.tar.gz && 7z x lua-5.3.3.tar
-  - move lua-5.3.3\src lua
+  - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.2.4.tar.gz
+  - 7z x lua-5.2.4.tar.gz && 7z x lua-5.2.4.tar
+  - move lua-5.2.4\src lua
   - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
   - 7z x sqlite-amalgamation-3140100.zip
   - move sqlite-amalgamation-3140100 sqlite3
