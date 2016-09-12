@@ -36,12 +36,13 @@ install:
   - move irrlicht.premake4.lua irrlicht/premake4.lua
   - move lua.premake4.lua lua/premake4.lua
   - move sqlite3.premake4.lua sqlite3/premake4.lua
-  - dir
-  - dir 
   
   # premake
   - premake5 vs2015
-  - dir
+  
+  # check files, for debug
+  - tree /F
+  
 #platform: 
 #  - x86
 #  - x64
