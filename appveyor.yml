@@ -16,9 +16,9 @@ install:
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
   - 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
   - move freetype-2.5.5 freetype
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.7/1.7.3/irrlicht-1.7.3.zip
-  - 7z x irrlicht-1.7.3.zip
-  - move irrlicht-1.7.3 irrlicht
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
+  - 7z x irrlicht-1.8.4.zip
+  - move irrlicht-1.8.4 irrlicht
   - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
   - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
   - move libevent-2.0.22-stable event
@@ -43,7 +43,7 @@ install:
   # check files, for debug
   #- tree /F
   
-#platform: # it not works
+#platform: 
 #  - x86
 #  - x64
 configuration: Release

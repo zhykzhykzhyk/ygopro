@@ -27,6 +27,7 @@ solution "ygo"
         flags "EnableSSE2"
         buildoptions { "-wd4996" }
         defines { "_CRT_SECURE_NO_WARNINGS" }
+		characterset ("MBCS")
 
     configuration "not vs*"
         buildoptions { "-fno-strict-aliasing", "-Wno-multichar" }
