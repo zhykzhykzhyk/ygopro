@@ -13,9 +13,9 @@ install:
   # environment and system dependency
   - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
   - 7z x premake-5.0.0-alpha9-windows.zip
-  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.7.tar.gz
-  - 7z x freetype-2.7.tar.gz && 7z x freetype-2.7.tar
-  - move freetype-2.7 freetype
+  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
+  - 7z x freetype-2.5.5.tar.gz && 7z x freetype-2.5.5.tar
+  - move freetype-2.5.5 freetype
   - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
   - 7z x irrlicht-1.8.4.zip
   - move irrlicht-1.8.4 irrlicht
@@ -42,6 +42,10 @@ install:
   # premake
   - premake5 vs2015
   - dir
+platform: 
+  - x86
+  - x64
+configuration: Release
 build: 
     project: build/ygo.sln
     parallel: true
