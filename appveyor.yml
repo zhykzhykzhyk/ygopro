@@ -38,7 +38,7 @@ install:
   - move sqlite3.premake4.lua sqlite3/premake4.lua
   
   # premake
-  - premake5 vs2010
+  - premake5 vs2015
   
   # check files, for debug
   #- tree /F
