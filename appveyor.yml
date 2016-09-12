@@ -23,6 +23,7 @@ install:
   - 7z x lua-5.3.3.tar.gz && 7z x lua-5.3.3.tar
   - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
   - 7z x sqlite-amalgamation-3140100.zip
+  - premake5 vs2015
   - dir
 
 after_build:
