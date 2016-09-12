@@ -11,12 +11,23 @@ install:
   - git submodule update --init --recursive
 
   # environment and system dependency
-  - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip premake.zip
-  - 7z x premake.zip
-  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.7.tar.gz freetype.tar.gz
-  - 7z x freetype.tar.gz
+  - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
+  - 7z x premake-5.0.0-alpha9-windows.zip
+  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.7.tar.gz
+  - 7z x freetype-2.7.tar.gz && 7z x freetype-2.7.tar
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
+  - 7z x irrlicht-1.8.4.zip
+  - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
+  - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
+  - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.3.3.tar.gz
+  - 7z x lua-5.3.3.tar.gz && 7z x lua-5.3.3.tar
+  - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
+  - 7z x sqlite-amalgamation-3140100.zip
+  - dir
 
 after_build:
+  - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
+  - dir
 artifacts:
   - path: ygopro-images
     name: ygopro-images-zh-CN
