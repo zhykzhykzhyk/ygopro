@@ -35,11 +35,14 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./; dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/libs/ -i /opt/X11/lib/; strip ygopro.app/Contents/MacOS/ygopro; fi
 before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
+  - XZ_OPT=-9e tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
   - mkdir -p pics; wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
   - XZ_OPT=-9e tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 deploy:
   provider: releases
-  file: ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
+  file:
+    - ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
+    - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
   api_key:
     secure: "Js+zijIaucVvTm/knFOKLQ0KTdn93g/xgka8J4EQymgqM7JizL15sHSlVKPhqIFfMQYi/AUjNs7ikzYRO4QCe09GbYniSnFQhHPyGd7bb1tzJ5a7s8MdbP6rGFZ/v/SEbuTqDCsxtGGCfy9F/WMJ1J7o6dmuFfrAXEDzTtXrQrs="
   skip_cleanup: true
