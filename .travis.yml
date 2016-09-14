@@ -29,7 +29,7 @@ script:
   - premake4 gmake
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
-  - make config=release
+  - make config=release ygopro
   - cd ..
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./; dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/libs/ -i /opt/X11/lib/; strip ygopro.app/Contents/MacOS/ygopro; fi
