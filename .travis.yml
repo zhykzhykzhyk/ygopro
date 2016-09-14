@@ -24,7 +24,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv -in ssh-key.enc -out $HOME/.ssh/id_ecdsa -d
   - chmod 600 $HOME/.ssh/id_ecdsa
   - git submodule update --init --recursive
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install premake freetype libevent sqlite irrlicht lua; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install premake freetype libevent sqlite irrlicht lua dylibbundler; fi
 script:
   - premake4 gmake
   - cd build
@@ -32,14 +32,14 @@ script:
   - make config=release
   - cd ..
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./ ./; strip ygopro.app/Contents/MacOS/ygopro; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./; dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/libs/ -i /opt/X11/lib/; strip ygopro.app/Contents/MacOS/ygopro; fi
+before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
   - mkdir -p pics; wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then XZ_OPT=-9e tar -Jcf ygopro.tar.xz ygopro LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then XZ_OPT=-9e tar -Jcf ygopro.tar.xz ygopro.app LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics; fi
+  - XZ_OPT=-9e tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 deploy:
   provider: releases
-  file: "ygopro.tar.xz"
+  file: ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
   api_key:
       secure: "hJ0p7PrsahA+e8szAnepJC+D02cobtFWZtC2qH2Aljr4RGP0Mi/4p7k9m+Ob27NBaGA1wg0B6W+SNX3uEAUkr5upS+/VRhb0i34zkFiYw30KpufXjQ0TiWGJfozV97T4UzMFtl+dYh/WLMO+QTwQK9EE0FLwTWWn6aXrNPDZYQA="
   skip_cleanup: true
