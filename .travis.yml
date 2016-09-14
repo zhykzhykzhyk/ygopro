@@ -48,4 +48,4 @@ deploy:
 branches:
   only:
     - master
-    - /v\d+\.\w+/
+    - /v\d+\..+/
