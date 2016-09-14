@@ -41,7 +41,7 @@ deploy:
   provider: releases
   file: ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
   api_key:
-      secure: "hJ0p7PrsahA+e8szAnepJC+D02cobtFWZtC2qH2Aljr4RGP0Mi/4p7k9m+Ob27NBaGA1wg0B6W+SNX3uEAUkr5upS+/VRhb0i34zkFiYw30KpufXjQ0TiWGJfozV97T4UzMFtl+dYh/WLMO+QTwQK9EE0FLwTWWn6aXrNPDZYQA="
+    secure: "Js+zijIaucVvTm/knFOKLQ0KTdn93g/xgka8J4EQymgqM7JizL15sHSlVKPhqIFfMQYi/AUjNs7ikzYRO4QCe09GbYniSnFQhHPyGd7bb1tzJ5a7s8MdbP6rGFZ/v/SEbuTqDCsxtGGCfy9F/WMJ1J7o6dmuFfrAXEDzTtXrQrs="
   skip_cleanup: true
   on:
     tags: true
