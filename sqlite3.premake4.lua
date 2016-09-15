@@ -1,4 +1,4 @@
 project "sqlite3"
     kind "StaticLib"
 
-    files { "**.cc", "**.cpp", "**.c", "**.h" }
+    files { "sqlite3.c", "sqlite3.h" }

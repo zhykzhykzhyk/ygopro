@@ -6,7 +6,7 @@ solution "ygo"
     configurations { "Debug", "Release" }
 
     configuration "windows"
-        defines { "WIN32", "_WIN32" }
+        defines { "WIN32", "_WIN32", "WINVER=0x0501" }
 
     configuration "bsd"
         defines { "LUA_USE_POSIX" }
@@ -27,7 +27,6 @@ solution "ygo"
         flags "EnableSSE2"
         buildoptions { "-wd4996" }
         defines { "_CRT_SECURE_NO_WARNINGS" }
-        characterset ("MBCS")
 
     configuration "not vs*"
         buildoptions { "-fno-strict-aliasing", "-Wno-multichar" }
@@ -44,10 +43,14 @@ solution "ygo"
         defines "NDEBUG"
         buildoptions "-march=native"
 
+    configuration { "Release", "vs*" }
+        flags { "StaticRuntime", "LinkTimeOptimization" }
+
     configuration { "Debug", "vs*" }
         defines { "_ITERATOR_DEBUG_LEVEL=0" }
 
     configuration "Release"
+        flags { "OptimizeSpeed" }
         targetdir "bin/release"
 
     include "ocgcore"
