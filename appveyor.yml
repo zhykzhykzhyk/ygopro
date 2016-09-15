@@ -11,10 +11,8 @@ install:
   - git submodule update --init --recursive
 
   # environment and system dependency
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/premake/Premake/4.4/premake-4.4-beta5-windows.zip
-  - 7z x premake-4.4-beta5-windows.zip
-  #- ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
-  #- 7z x premake-5.0.0-alpha9-windows.zip
+  - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
+  - 7z x premake-5.0.0-alpha9-windows.zip
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
   - 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
   - move freetype-2.5.5 freetype
@@ -41,8 +39,7 @@ install:
   - move sqlite3.premake4.lua sqlite3/premake4.lua
   
   # premake
-  #- premake5 vs2015
-  - premake4 vs2013
+  - premake5 vs2015
   
   # - type irrlicht\source\Irrlicht\jpeglib\jmemdos.c
   # check files, for debug
