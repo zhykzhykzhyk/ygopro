@@ -24,8 +24,8 @@ install:
   - move irrlicht-1.8\source\Irrlicht irrlicht\src
   - move irrlicht-1.8\include irrlicht\include
   # download MSYS2 to apply patch
-  - ps: Start-FileDownload http://sourceforge.mirrorservice.org/m/ms/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
-  - ps: Start-FileDownload http://sourceforge.mirrorservice.org/m/ms/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
   - 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz && 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar
   - 7z x patch-2.7.5-1-x86_64.pkg.tar.xz && 7z x -y patch-2.7.5-1-x86_64.pkg.tar
   - usr\bin\patch.exe -p0 < irrlicht.patch
