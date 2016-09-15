@@ -13,22 +13,32 @@ install:
   # environment and system dependency
   - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
   - 7z x premake-5.0.0-alpha9-windows.zip
+  
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
   - 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
   - move freetype-2.5.5 freetype
+  
   - ps: Start-FileDownload http://sourceforge.mirrorservice.org/i/ir/irrlicht/Irrlicht%20SDK/1.8/irrlicht-1.8.zip
   - 7z x irrlicht-1.8.zip
   - md irrlicht
   - move irrlicht-1.8\source\Irrlicht irrlicht\src
   - move irrlicht-1.8\include irrlicht\include
-  - patch -p0 < irrlicht.patch
+  # download MSYS2 to apply patch
+  - ps: Start-FileDownload http://sourceforge.mirrorservice.org/m/ms/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
+  - ps: Start-FileDownload http://sourceforge.mirrorservice.org/m/ms/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
+  - 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz && 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar
+  - 7z x patch-2.7.5-1-x86_64.pkg.tar.xz && 7z x -y patch-2.7.5-1-x86_64.pkg.tar
+  - usr\bin\patch.exe -p0 < irrlicht.patch
+  
   - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
   - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
   - move libevent-2.0.22-stable event
   - xcopy /E event\WIN32-Code event\include
+  
   - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.2.4.tar.gz
   - 7z x lua-5.2.4.tar.gz && 7z x lua-5.2.4.tar
   - move lua-5.2.4\src lua
+  
   - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
   - 7z x sqlite-amalgamation-3140100.zip
   - move sqlite-amalgamation-3140100 sqlite3
