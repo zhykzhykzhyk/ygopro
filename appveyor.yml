@@ -11,7 +11,7 @@ install:
   - git submodule update --init --recursive
 
   # environment and system dependency
-  - ps: Invoke-WebRequest http://downloads.sourceforge.net/project/premake/Premake/4.4/premake-4.4-beta5-windows.zip -OutFile 
+  - ps: Invoke-WebRequest http://downloads.sourceforge.net/project/premake/Premake/4.4/premake-4.4-beta5-windows.zip -OutFile premake-4.4-beta5-windows.zip
   - 7z x premake-4.4-beta5-windows.zip
   #- ps: Invoke-WebRequest https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip -OutFile premake-5.0.0-alpha9-windows.zip
   #- 7z x premake-5.0.0-alpha9-windows.zip
