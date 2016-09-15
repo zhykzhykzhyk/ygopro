@@ -11,23 +11,24 @@ install:
   - git submodule update --init --recursive
 
   # environment and system dependency
-  - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
-  - 7z x premake-5.0.0-alpha9-windows.zip
-  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
+  - ps: Invoke-WebRequest http://downloads.sourceforge.net/project/premake/Premake/4.4/premake-4.4-beta5-windows.zip -OutFile 
+  - 7z x premake-4.4-beta5-windows.zip
+  #- ps: Invoke-WebRequest https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip -OutFile premake-5.0.0-alpha9-windows.zip
+  #- 7z x premake-5.0.0-alpha9-windows.zip
+  - ps: Invoke-WebRequest http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2 -OutFile freetype-2.5.5.tar.bz2
   - 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
   - move freetype-2.5.5 freetype
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
-  - 7z x irrlicht-1.8.4.zip
-  - move irrlicht-1.8.4\source\Irrlicht irrlicht
-  - move irrlicht-1.8.4\include irrlicht\include
-  - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
+  - ps: Invoke-WebRequest http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/irrlicht-1.8.zip -OutFile irrlicht-1.8.zip
+  - 7z x irrlicht-1.8.zip
+  - move irrlicht-1.8 irrlicht
+  - ps: Invoke-WebRequest https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz -OutFile libevent-2.0.22-stable.tar.gz
   - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
   - move libevent-2.0.22-stable event
   - xcopy /E event\WIN32-Code event\include
-  - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.2.4.tar.gz
+  - ps: Invoke-WebRequest https://www.lua.org/ftp/lua-5.2.4.tar.gz -OutFile lua-5.2.4.tar.gz
   - 7z x lua-5.2.4.tar.gz && 7z x lua-5.2.4.tar
   - move lua-5.2.4\src lua
-  - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
+  - ps: Invoke-WebRequest https://sqlite.org/2016/sqlite-amalgamation-3140100.zip -OutFile sqlite-amalgamation-3140100.zip
   - 7z x sqlite-amalgamation-3140100.zip
   - move sqlite-amalgamation-3140100 sqlite3
 
@@ -39,9 +40,10 @@ install:
   - move sqlite3.premake4.lua sqlite3/premake4.lua
   
   # premake
-  - premake5 vs2015
+  #- premake5 vs2015
+  - premake4 vs2012
   
-  # - type irrlicht\source\Irrlicht\jpeglib\jmemdos.c
+  - type irrlicht\source\Irrlicht\jpeglib\jmemdos.c
   # check files, for debug
   #- tree /F
   
@@ -53,7 +55,7 @@ build:
     project: build/ygo.sln
     parallel: true
 after_build:
-  - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
+  - ps: Invoke-WebRequest https://mycard.moe/ygopro/cards.cdb -OutFile cards.cdb
   - dir
 artifacts:
   - path: ygopro-images
