@@ -14,11 +14,11 @@ install:
   - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
   - 7z x premake-5.0.0-alpha9-windows.zip
   
-  - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/freetype/freetype2/2.7/freetype-2.7.tar.gz
   - tar xf freetype-2.5.5.tar.bz2
   - move freetype-2.5.5 freetype
   
-  - ps: Start-FileDownload http://sourceforge.mirrorservice.org/i/ir/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
+  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
   - 7z x irrlicht-1.8.4.zip
   - md irrlicht
   - move irrlicht-1.8.4\source\Irrlicht irrlicht\src
