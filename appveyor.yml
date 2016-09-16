@@ -4,8 +4,6 @@ environment:
 version: '{build}'
 install:
   - tar -v
-  - gz -v
-  - xz -v
   - patch -v
   # ssh key and submodules
   - ps: $fileContent = "-----BEGIN EC PRIVATE KEY-----`n"
