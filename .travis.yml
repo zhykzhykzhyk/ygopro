@@ -27,8 +27,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; ./premake5 gmake; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; ./premake5 gmake --cc=clang; fi 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./premake5 gmake; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./premake5 gmake --cc=clang; fi 
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
   - make config=release ygopro
