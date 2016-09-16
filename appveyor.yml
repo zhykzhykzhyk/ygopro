@@ -62,14 +62,16 @@ after_build:
   - tar --strip-components=1 -C pics -xf zh-CN.tar.gz
   - 7z a ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 artifacts:
-  - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z
-  - path: ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z
+  - path: ygopro-lite-$(APPVEYOR_REPO_TAG_NAME)-win32.7z
+    name: ygopro-lite
+  - path: ygopro-$(APPVEYOR_REPO_TAG_NAME)-win32.7z
+    name: ygopro
 deploy:
   description: 'Automatic build'
   provider: GitHub
   auth_token:
     secure: itZ9Z1dxEpfPJLdTs/PiY98pVZ3GCLNWfid7eAu7SL88Jl9AIrf/3rviKFEbsnoY # your encrypted token from GitHub
-  artifact: /ygopro-.*-win32\.7z/
+  artifact: 'ygopro,ygopro-lite' #/ygopro-.*-win32\.7z/
   on:
     appveyor_repo_tag: true        # deploy on tag push only
 branches:
