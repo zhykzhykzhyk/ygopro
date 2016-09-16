@@ -56,7 +56,6 @@ build:
 after_build:
   - ps: move bin\release\ygopro.exe .
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
-before_deploy:
   - 7z a ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
   - ps: Start-FileDownload https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz
   - mkdir pics
