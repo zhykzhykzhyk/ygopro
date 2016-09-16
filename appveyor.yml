@@ -66,15 +66,11 @@ artifacts:
   - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z
   - path: ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z
 deploy:
-  release: "%APPVEYOR_REPO_TAG_NAME%"
   description: 'Automatic build'
   provider: GitHub
   auth_token:
     secure: itZ9Z1dxEpfPJLdTs/PiY98pVZ3GCLNWfid7eAu7SL88Jl9AIrf/3rviKFEbsnoY # your encrypted token from GitHub
-  draft: false
-  prerelease: false
+  artifact: /ygopro-.*-win32\.7z/
   on:
     branch: master                 # release from master branch only
-    #appveyor_repo_tag: true        # deploy on tag push only
-
-#build: off
+    appveyor_repo_tag: true        # deploy on tag push only
