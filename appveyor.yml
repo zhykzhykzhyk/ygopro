@@ -76,3 +76,4 @@ deploy:
 branches:
   only:
     - master
+    - /\d+\..+/
