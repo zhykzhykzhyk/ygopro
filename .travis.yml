@@ -12,7 +12,6 @@ addons:
     - github.com
   apt:
     packages:
-      - premake4
       - libfreetype6-dev
       - libevent-dev
       - libsqlite3-dev
@@ -24,9 +23,11 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_c268b785a48e_key -iv $encrypted_c268b785a48e_iv -in ssh-key.enc -out $HOME/.ssh/id_ecdsa -d
   - chmod 600 $HOME/.ssh/id_ecdsa
   - git submodule update --init --recursive
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install premake freetype libevent sqlite irrlicht lua dylibbundler; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install freetype libevent sqlite irrlicht lua dylibbundler; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux"]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
-  - premake4 gmake
+  - ./premake5 gmake
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
   - make config=release ygopro
