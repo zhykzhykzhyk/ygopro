@@ -58,8 +58,9 @@ after_build:
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
 before_deploy:
   - 7z a ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
+  - ps: Start-FileDownload https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz
   - mkdir pics
-  - wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
+  - tar --strip-components=1 -C pics -xf zh-CN.tar.gz
   - 7z a ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 artifacts:
   - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z
