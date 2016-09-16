@@ -15,33 +15,24 @@ install:
   - 7z x premake-5.0.0-alpha9-windows.zip
   
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
-  - tar vxf freetype-2.5.5.tar.bz2
-  - dir
-  #- 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
-  #- move freetype-2.5.5 freetype
+  - tar xf freetype-2.5.5.tar.bz2
+  - move freetype-2.5.5 freetype
   
   - ps: Start-FileDownload http://sourceforge.mirrorservice.org/i/ir/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
   - 7z x irrlicht-1.8.4.zip
   - md irrlicht
   - move irrlicht-1.8.4\source\Irrlicht irrlicht\src
   - move irrlicht-1.8.4\include irrlicht\include
-  # download MSYS2 to apply patch
-  #- ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
-  #- ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
-  #- 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz && 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar
-  #- 7z x patch-2.7.5-1-x86_64.pkg.tar.xz && 7z x -y patch-2.7.5-1-x86_64.pkg.tar
-  #- usr\bin\patch.exe -p0 < irrlicht.patch
-  #- usr\bin\patch.exe -p0 < test.patch
   - patch -p0 < irrlicht.patch
   - patch -p0 < test.patch
   
   - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
-  - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
+  - tar xf libevent-2.0.22-stable.tar.gz
   - move libevent-2.0.22-stable event
   - xcopy /E event\WIN32-Code event\include
   
   - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.2.4.tar.gz
-  - 7z x lua-5.2.4.tar.gz && 7z x lua-5.2.4.tar
+  - tar xf lua-5.2.4.tar.gz
   - move lua-5.2.4\src lua
   
   - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
@@ -58,25 +49,23 @@ install:
   # premake
   - premake5 vs2015
   
-  # check files, for debug
-  #- tree /F
-  
-#platform: 
-#  - x86
-#  - x64
 configuration: Release
 build: 
     project: build/ygo.sln
     parallel: true
 after_build:
+  - ps: move bin\release\ygopro.exe .
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
-  - dir
+before_deploy:
+  - XZ_OPT=-9e tar -Jcf ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
+  - mkdir pics
+  - wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
+  - XZ_OPT=-9e tar -Jcf ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 artifacts:
-  - path: ygopro-images
-    name: ygopro-images-zh-CN
-    type: 7z
+  - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
+  - path: ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
 deploy:
-  release: latest
+  release: %APPVEYOR_REPO_TAG_NAME%
   description: 'Automatic build'
   provider: GitHub
   auth_token:
