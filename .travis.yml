@@ -27,13 +27,14 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
-  - ./premake5 gmake
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; ./premake5 gmake; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; ./premake5 gmake --cc=clang; fi 
   - cd build
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make; fi
   - make config=release ygopro
   - cd ..
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mv bin/release/ygopro.app ./; dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/libs/; strip ygopro.app/Contents/MacOS/ygopro; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir -p ygopro.app/Contents/MacOS; mv bin/release/ygopro ygopro.app/Contents/MacOS; dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/libs/; strip ygopro.app/Contents/MacOS/ygopro; fi
 before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
   - XZ_OPT=-9e tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
