@@ -15,7 +15,8 @@ install:
   - 7z x premake-5.0.0-alpha9-windows.zip
   
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
-  - tar xf freetype-2.5.5.tar.bz2
+  - tar vxf freetype-2.5.5.tar.bz2
+  - dir
   #- 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
   #- move freetype-2.5.5 freetype
   
