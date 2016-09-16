@@ -65,7 +65,7 @@ artifacts:
   - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
   - path: ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
 deploy:
-  release: %APPVEYOR_REPO_TAG_NAME%
+  release: "%APPVEYOR_REPO_TAG_NAME%"
   description: 'Automatic build'
   provider: GitHub
   auth_token:
