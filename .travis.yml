@@ -24,8 +24,8 @@ before_install:
   - chmod 600 $HOME/.ssh/id_ecdsa
   - git submodule update --init --recursive
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install freetype libevent sqlite irrlicht lua dylibbundler; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx - ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux"]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx - ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
   - ./premake5 gmake
   - cd build
