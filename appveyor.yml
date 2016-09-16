@@ -1,6 +1,7 @@
 environment:
   priv_key:
       secure: ek1AH0N8/KF6VoildmkHnu4TY1yBZcptm20AesAOanRSSGLFqkXeRxL80mHSXtiVY8ggtQNsEQR4M69gCiw1OPVWz4OAN6Vg6id6kho9GqYxWCdADbmffSNPB5leksRGjGmkAF99WHiOIZrLRUb6Bia91Fe5+SngPhI01GDDUZA2urv9x50uBBhc+kvV0bv7J5TeXDGr7tfZ3J2aL/3tf/WPqBkqjWlGAj99HTWpkIiQgwaBHoyBvEFD0uHa1BdSmI7PySGabbx4/4zqyGkO38Ce7t/Ntu/dgedzVxlXYfuiXDI8caAPZSVsJ9E2S3VKesZJzHtV9KM/8Xq0RFPythdC/qTvd2e3IAZGudZpgbUHGAHLJnCzn189Zm+Qle8CbbVuPNDcf1B/G/XwEU2MsDXGkF/kFxdeqbHgjzneyns=
+  XZ_OPT: -9e
 version: '{build}'
 install:
   # ssh key and submodules
@@ -57,10 +58,10 @@ after_build:
   - ps: move bin\release\ygopro.exe .
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
 before_deploy:
-  - XZ_OPT=-9e tar -Jcf ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
+  - tar -Jcf ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
   - mkdir pics
   - wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
-  - XZ_OPT=-9e tar -Jcf ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
+  - tar -Jcf ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 artifacts:
   - path: ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
   - path: ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.xz
