@@ -3,8 +3,6 @@ environment:
       secure: ek1AH0N8/KF6VoildmkHnu4TY1yBZcptm20AesAOanRSSGLFqkXeRxL80mHSXtiVY8ggtQNsEQR4M69gCiw1OPVWz4OAN6Vg6id6kho9GqYxWCdADbmffSNPB5leksRGjGmkAF99WHiOIZrLRUb6Bia91Fe5+SngPhI01GDDUZA2urv9x50uBBhc+kvV0bv7J5TeXDGr7tfZ3J2aL/3tf/WPqBkqjWlGAj99HTWpkIiQgwaBHoyBvEFD0uHa1BdSmI7PySGabbx4/4zqyGkO38Ce7t/Ntu/dgedzVxlXYfuiXDI8caAPZSVsJ9E2S3VKesZJzHtV9KM/8Xq0RFPythdC/qTvd2e3IAZGudZpgbUHGAHLJnCzn189Zm+Qle8CbbVuPNDcf1B/G/XwEU2MsDXGkF/kFxdeqbHgjzneyns=
 version: '{build}'
 install:
-  - tar -v
-  - patch -v
   # ssh key and submodules
   - ps: $fileContent = "-----BEGIN EC PRIVATE KEY-----`n"
   - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
@@ -17,8 +15,9 @@ install:
   - 7z x premake-5.0.0-alpha9-windows.zip
   
   - ps: Start-FileDownload http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2
-  - 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
-  - move freetype-2.5.5 freetype
+  - tar xf freetype-2.5.5.tar.bz2
+  #- 7z x freetype-2.5.5.tar.bz2 && 7z x freetype-2.5.5.tar
+  #- move freetype-2.5.5 freetype
   
   - ps: Start-FileDownload http://sourceforge.mirrorservice.org/i/ir/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
   - 7z x irrlicht-1.8.4.zip
@@ -26,12 +25,14 @@ install:
   - move irrlicht-1.8.4\source\Irrlicht irrlicht\src
   - move irrlicht-1.8.4\include irrlicht\include
   # download MSYS2 to apply patch
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
-  - 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz && 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar
-  - 7z x patch-2.7.5-1-x86_64.pkg.tar.xz && 7z x -y patch-2.7.5-1-x86_64.pkg.tar
-  - usr\bin\patch.exe -p0 < irrlicht.patch
-  - usr\bin\patch.exe -p0 < test.patch
+  #- ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz
+  #- ps: Start-FileDownload http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/x86_64/patch-2.7.5-1-x86_64.pkg.tar.xz
+  #- 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar.xz && 7z x msys2-runtime-2.0.16627.db76629-1-x86_64.pkg.tar
+  #- 7z x patch-2.7.5-1-x86_64.pkg.tar.xz && 7z x -y patch-2.7.5-1-x86_64.pkg.tar
+  #- usr\bin\patch.exe -p0 < irrlicht.patch
+  #- usr\bin\patch.exe -p0 < test.patch
+  - patch -p0 < irrlicht.patch
+  - patch -p0 < test.patch
   
   - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
   - 7z x libevent-2.0.22-stable.tar.gz && 7z x libevent-2.0.22-stable.tar
