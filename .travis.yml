@@ -38,7 +38,7 @@ script:
 before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
   - XZ_OPT=-9e tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb
-  - mkdir -p pics; wget -O - https://github.com/mycard/ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
+  - mkdir -p pics; wget -O - https://github.com/mycard/deprecated-ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
   - XZ_OPT=-9e tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures cards.cdb pics
 deploy:
   provider: releases
