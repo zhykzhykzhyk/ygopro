@@ -1,0 +1,15 @@
+bin/
+build/
+event/
+freetype/
+irrlicht/
+lua/
+obj/
+sqlite3/
+deck/
+replay/
+premake4.exe
+premake5.exe
+cards.cdb
+ygopro.exe
+gframe/ygopro.aps
