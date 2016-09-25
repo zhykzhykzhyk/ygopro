@@ -1,6 +1,6 @@
-diff -ur --strip-trailing-cr irrlicht/include/IOSOperator.h ../ygopro-build/irrlicht/include/IOSOperator.h
+diff -ur --strip-trailing-cr irrlicht/include/IOSOperator.h irrlicht-fixed/include/IOSOperator.h
 --- irrlicht/include/IOSOperator.h	2012-11-03 10:08:34.000000000 +0000
-+++ ../ygopro-build/irrlicht/include/IOSOperator.h	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/include/IOSOperator.h	2015-06-14 17:32:58.000000000 +0000
 @@ -26,11 +26,11 @@
  	}
  
@@ -15,9 +15,9 @@ diff -ur --strip-trailing-cr irrlicht/include/IOSOperator.h ../ygopro-build/irrl
  
  	//! Get the processor speed in megahertz
  	/** \param MHz The integer variable to store the speed in.
-diff -ur --strip-trailing-cr irrlicht/include/irrTypes.h ../ygopro-build/irrlicht/include/irrTypes.h
+diff -ur --strip-trailing-cr irrlicht/include/irrTypes.h irrlicht-fixed/include/irrTypes.h
 --- irrlicht/include/irrTypes.h	2012-11-03 10:08:34.000000000 +0000
-+++ ../ygopro-build/irrlicht/include/irrTypes.h	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/include/irrTypes.h	2015-06-14 17:32:58.000000000 +0000
 @@ -48,7 +48,9 @@
  typedef signed short		s16;
  #endif
@@ -29,9 +29,9 @@ diff -ur --strip-trailing-cr irrlicht/include/irrTypes.h ../ygopro-build/irrlich
  
  //! 32 bit unsigned variable.
  /** This is a typedef for unsigned int, it ensures portability of the engine. */
-diff -ur --strip-trailing-cr irrlicht/include/Keycodes.h ../ygopro-build/irrlicht/include/Keycodes.h
+diff -ur --strip-trailing-cr irrlicht/include/Keycodes.h irrlicht-fixed/include/Keycodes.h
 --- irrlicht/include/Keycodes.h	2012-11-03 10:08:32.000000000 +0000
-+++ ../ygopro-build/irrlicht/include/Keycodes.h	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/include/Keycodes.h	2015-06-14 17:32:58.000000000 +0000
 @@ -89,7 +89,7 @@
  		KEY_KEY_X            = 0x58,  // X key
  		KEY_KEY_Y            = 0x59,  // Y key
@@ -41,9 +41,9 @@ diff -ur --strip-trailing-cr irrlicht/include/Keycodes.h ../ygopro-build/irrlich
  		KEY_RWIN             = 0x5C,  // Right Windows key (Natural keyboard)
  		KEY_APPS             = 0x5D,  // Applications key (Natural keyboard)
  		KEY_SLEEP            = 0x5F,  // Computer Sleep key
-diff -ur --strip-trailing-cr irrlicht/src/CD3D9ShaderMaterialRenderer.cpp ../ygopro-build/irrlicht/src/CD3D9ShaderMaterialRenderer.cpp
+diff -ur --strip-trailing-cr irrlicht/src/CD3D9ShaderMaterialRenderer.cpp irrlicht-fixed/src/CD3D9ShaderMaterialRenderer.cpp
 --- irrlicht/src/CD3D9ShaderMaterialRenderer.cpp	2012-11-03 10:08:10.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/CD3D9ShaderMaterialRenderer.cpp	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/CD3D9ShaderMaterialRenderer.cpp	2015-06-14 17:32:58.000000000 +0000
 @@ -329,7 +329,7 @@
  			strDllName += (int)D3DX_SDK_VERSION;
  			strDllName += ".dll";
@@ -80,9 +80,9 @@ diff -ur --strip-trailing-cr irrlicht/src/CD3D9ShaderMaterialRenderer.cpp ../ygo
  			if (hMod)
  				 pFn = (D3DXCompileShaderFromFileFunction)GetProcAddress(hMod, "D3DXCompileShaderFromFileA");
  
-diff -ur --strip-trailing-cr irrlicht/src/CGUIEditBox.cpp ../ygopro-build/irrlicht/src/CGUIEditBox.cpp
+diff -ur --strip-trailing-cr irrlicht/src/CGUIEditBox.cpp irrlicht-fixed/src/CGUIEditBox.cpp
 --- irrlicht/src/CGUIEditBox.cpp	2012-11-03 10:08:16.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/CGUIEditBox.cpp	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/CGUIEditBox.cpp	2015-06-14 17:32:58.000000000 +0000
 @@ -286,7 +286,7 @@
  				const s32 realmbgn = MarkBegin < MarkEnd ? MarkBegin : MarkEnd;
  				const s32 realmend = MarkBegin < MarkEnd ? MarkEnd : MarkBegin;
@@ -110,9 +110,9 @@ diff -ur --strip-trailing-cr irrlicht/src/CGUIEditBox.cpp ../ygopro-build/irrlic
  				if (p)
  				{
  					if (MarkBegin == MarkEnd)
-diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.cpp ../ygopro-build/irrlicht/src/CIrrDeviceWin32.cpp
+diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.cpp irrlicht-fixed/src/CIrrDeviceWin32.cpp
 --- irrlicht/src/CIrrDeviceWin32.cpp	2012-11-05 07:14:12.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/CIrrDeviceWin32.cpp	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/CIrrDeviceWin32.cpp	2015-06-14 17:32:58.000000000 +0000
 @@ -16,14 +16,16 @@
  #include "COSOperator.h"
  #include "dimension2d.h"
@@ -382,9 +382,9 @@ diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.cpp ../ygopro-build/ir
  		}
  	}
  }
-diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.h ../ygopro-build/irrlicht/src/CIrrDeviceWin32.h
+diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.h irrlicht-fixed/src/CIrrDeviceWin32.h
 --- irrlicht/src/CIrrDeviceWin32.h	2012-11-05 07:14:12.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/CIrrDeviceWin32.h	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/CIrrDeviceWin32.h	2015-06-14 17:32:58.000000000 +0000
 @@ -395,7 +395,7 @@
  		bool Resized;
  		bool ExternalWindow;
@@ -394,9 +394,9 @@ diff -ur --strip-trailing-cr irrlicht/src/CIrrDeviceWin32.h ../ygopro-build/irrl
  
  		SJoystickWin32Control* JoyControl;
  	};
-diff -ur --strip-trailing-cr irrlicht/src/COpenGLDriver.cpp ../ygopro-build/irrlicht/src/COpenGLDriver.cpp
+diff -ur --strip-trailing-cr irrlicht/src/COpenGLDriver.cpp irrlicht-fixed/src/COpenGLDriver.cpp
 --- irrlicht/src/COpenGLDriver.cpp	2012-11-03 10:08:08.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/COpenGLDriver.cpp	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/COpenGLDriver.cpp	2015-06-14 17:32:58.000000000 +0000
 @@ -85,11 +85,11 @@
  bool COpenGLDriver::initDriver(CIrrDeviceWin32* device)
  {
@@ -472,9 +472,9 @@ diff -ur --strip-trailing-cr irrlicht/src/COpenGLDriver.cpp ../ygopro-build/irrl
  
  	// get hdc
  	HDc=GetDC(Window);
-diff -ur --strip-trailing-cr irrlicht/src/COSOperator.cpp ../ygopro-build/irrlicht/src/COSOperator.cpp
+diff -ur --strip-trailing-cr irrlicht/src/COSOperator.cpp irrlicht-fixed/src/COSOperator.cpp
 --- irrlicht/src/COSOperator.cpp	2012-11-03 10:07:52.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/COSOperator.cpp	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/COSOperator.cpp	2015-06-14 17:32:58.000000000 +0000
 @@ -52,11 +52,8 @@
  
  
@@ -543,9 +543,9 @@ diff -ur --strip-trailing-cr irrlicht/src/COSOperator.cpp ../ygopro-build/irrlic
  	GlobalUnlock( hData );
  	CloseClipboard();
  	return buffer;
-diff -ur --strip-trailing-cr irrlicht/src/COSOperator.h ../ygopro-build/irrlicht/src/COSOperator.h
+diff -ur --strip-trailing-cr irrlicht/src/COSOperator.h irrlicht-fixed/src/COSOperator.h
 --- irrlicht/src/COSOperator.h	2012-11-03 10:08:00.000000000 +0000
-+++ ../ygopro-build/irrlicht/src/COSOperator.h	2015-06-14 17:32:58.000000000 +0000
++++ irrlicht-fixed/src/COSOperator.h	2015-06-14 17:32:58.000000000 +0000
 @@ -27,11 +27,11 @@
  	virtual const core::stringc& getOperatingSystemVersion() const;
  
@@ -560,3 +560,21 @@ diff -ur --strip-trailing-cr irrlicht/src/COSOperator.h ../ygopro-build/irrlicht
  
  	//! gets the processor speed in megahertz
  	//! \param Mhz:
+diff -ur --strip-trailing-cr irrlicht/src/CGUIEditBox.cpp irrlicht-fixed/src/CGUIEditBox.cpp
+--- irrlicht/src/CGUIEditBox.cpp	2016-09-15 18:12:49.532839000 +0000
++++ irrlicht-fixed/src/CGUIEditBox.cpp	2016-09-15 18:13:37.101559800 +0000
+@@ -333,13 +333,7 @@
+ 				const c16* p = Operator->getTextFromClipboard();
+ 				if (p)
+ 				{
+-					// TODO: we should have such a function in core::string
+-					size_t lenOld = strlen(p);
+-					wchar_t *ws = new wchar_t[lenOld + 1];
+-					size_t len = mbstowcs(ws,p,lenOld);
+-					ws[len] = 0;
+-					irr::core::stringw widep(ws);
+-					delete[] ws;
++					irr::core::stringw widep(p);
+ 
+ 					if (MarkBegin == MarkEnd)
+ 					{

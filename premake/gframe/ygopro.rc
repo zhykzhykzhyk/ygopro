@@ -1,6 +1,4 @@
-
 1 ICON "ygopro.ico"
-
 
 1 VERSIONINFO
 FILEVERSION 1, 0, 33, 11
@@ -13,7 +11,7 @@ BLOCK "StringFileInfo"
 BEGIN
 BLOCK "080404b0"
 BEGIN
-VALUE "FileDescription", "YGOPRO"
+VALUE "FileDescription", "YGOPRO ver.mycard"
 VALUE "InternalName", "YGOPRO"
 VALUE "LegalCopyright", "Copyright (C) 2016 Fluorohydride"
 VALUE "OriginalFilename", "ygopro.exe"

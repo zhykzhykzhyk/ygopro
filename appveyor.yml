@@ -1,50 +1,40 @@
-environment:
-  priv_key:
-      secure: ek1AH0N8/KF6VoildmkHnu4TY1yBZcptm20AesAOanRSSGLFqkXeRxL80mHSXtiVY8ggtQNsEQR4M69gCiw1OPVWz4OAN6Vg6id6kho9GqYxWCdADbmffSNPB5leksRGjGmkAF99WHiOIZrLRUb6Bia91Fe5+SngPhI01GDDUZA2urv9x50uBBhc+kvV0bv7J5TeXDGr7tfZ3J2aL/3tf/WPqBkqjWlGAj99HTWpkIiQgwaBHoyBvEFD0uHa1BdSmI7PySGabbx4/4zqyGkO38Ce7t/Ntu/dgedzVxlXYfuiXDI8caAPZSVsJ9E2S3VKesZJzHtV9KM/8Xq0RFPythdC/qTvd2e3IAZGudZpgbUHGAHLJnCzn189Zm+Qle8CbbVuPNDcf1B/G/XwEU2MsDXGkF/kFxdeqbHgjzneyns=
 version: '{build}'
 install:
-  # ssh key and submodules
-  - ps: $fileContent = "-----BEGIN EC PRIVATE KEY-----`n"
-  - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
-  - ps: $fileContent += "`n-----END EC PRIVATE KEY-----`n"
-  - ps: Set-Content c:\users\appveyor\.ssh\id_ecdsa $fileContent
+  # submodules
   - git submodule update --init --recursive
-
+  
   # environment and system dependency
-  - ps: Start-FileDownload https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
+  - appveyor DownloadFile https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-windows.zip
   - 7z x premake-5.0.0-alpha9-windows.zip
   
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/freetype/freetype2/2.5.5/freetype-2.5.5.tar.bz2
-  - tar xf freetype-2.5.5.tar.bz2
-  - move freetype-2.5.5 freetype
-  
-  - ps: Start-FileDownload http://downloads.sourceforge.net/project/irrlicht/Irrlicht%20SDK/1.8/1.8.4/irrlicht-1.8.4.zip
-  - 7z x irrlicht-1.8.4.zip
-  - md irrlicht
-  - move irrlicht-1.8.4\source\Irrlicht irrlicht\src
-  - move irrlicht-1.8.4\include irrlicht\include
-  - patch -p0 < irrlicht.patch
-  - patch -p0 < test.patch
-  
-  - ps: Start-FileDownload https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
+  - appveyor DownloadFile https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
   - tar xf libevent-2.0.22-stable.tar.gz
   - move libevent-2.0.22-stable event
   - xcopy /E event\WIN32-Code event\include
   
-  - ps: Start-FileDownload https://www.lua.org/ftp/lua-5.2.4.tar.gz
+  - appveyor DownloadFile http://downloads.sourceforge.net/freetype/freetype-2.7.tar.bz2
+  - tar xf freetype-2.7.tar.bz2
+  - move freetype-2.7 freetype
+  
+  - appveyor DownloadFile http://downloads.sourceforge.net/irrlicht/irrlicht-1.8.4.zip
+  - 7z x irrlicht-1.8.4.zip
+  - md irrlicht
+  - move irrlicht-1.8.4\source\Irrlicht irrlicht\src
+  - move irrlicht-1.8.4\include irrlicht\include
+  
+  - appveyor DownloadFile https://www.lua.org/ftp/lua-5.2.4.tar.gz
   - tar xf lua-5.2.4.tar.gz
   - move lua-5.2.4\src lua
   
-  - ps: Start-FileDownload https://sqlite.org/2016/sqlite-amalgamation-3140100.zip
-  - 7z x sqlite-amalgamation-3140100.zip
-  - move sqlite-amalgamation-3140100 sqlite3
-
+  - appveyor DownloadFile https://www.sqlite.org/2016/sqlite-amalgamation-3140200.zip
+  - 7z x sqlite-amalgamation-3140200.zip
+  - move sqlite-amalgamation-3140200 sqlite3
+  
   # let premake happy
-  - move event.premake4.lua event/premake4.lua
-  - move freetype.premake4.lua freetype/premake4.lua
-  - move irrlicht.premake4.lua irrlicht/premake4.lua
-  - move lua.premake4.lua lua/premake4.lua
-  - move sqlite3.premake4.lua sqlite3/premake4.lua
+  - xcopy /E premake\* .
+  
+  # patch irrlicht
+  - patch -p0 < irrlicht\irrlicht.patch
   
   # premake
   - premake5 vs2015
