@@ -1,4 +1,6 @@
-## ygopro
+# ygopro
+[![Build Status](https://travis-ci.org/mycard/ygopro.svg?branch=master)](https://travis-ci.org/mycard/ygopro) [![Build status](https://ci.appveyor.com/api/projects/status/qgkqi6o0wq7qn922?svg=true)](https://ci.appveyor.com/project/zh99998/ygopro)
+
 A script engine for "yu-gi-oh!" and sample gui
 
 [中文说明](https://github.com/Fluorohydride/ygopro/wiki/%E4%B8%AD%E6%96%87%E8%AF%B4%E6%98%8E)
