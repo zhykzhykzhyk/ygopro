@@ -40,7 +40,7 @@ script:
        mv bin/release/ygopro ygopro.app/Contents/MacOS;
        dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/Frameworks/;
        strip ygopro.app/Contents/MacOS/ygopro;
-       echo $CERTIFICATE | base64 — decode > cert.p12;
+       echo $CERTIFICATE | base64 --decode --output cert.p12;
        security create-keychain -p "" build.keychain;
        security unlock-keychain -p "" build.keychain;
        security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign;
