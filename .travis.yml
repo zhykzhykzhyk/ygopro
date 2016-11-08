@@ -44,7 +44,7 @@ script:
        security create-keychain -p "" build.keychain;
        security unlock-keychain -p "" build.keychain;
        security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign;
-       codesign --deep --sign "$(security find-identity -v -p codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
+       codesign --deep --keychain build.keychain --sign "$(security find-identity -v -p codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
     fi
 before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
