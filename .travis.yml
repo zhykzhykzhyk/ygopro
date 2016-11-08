@@ -22,9 +22,9 @@ addons:
 before_install:
   - git submodule update --init --recursive
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew update
-      brew install freetype libevent sqlite irrlicht lua dylibbundler
-      wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -
+      brew update;
+      brew install freetype libevent sqlite irrlicht lua dylibbundler;
+      wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
@@ -36,15 +36,15 @@ script:
   - cd ..
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-       mkdir -p ygopro.app/Contents/MacOS
-       mv bin/release/ygopro ygopro.app/Contents/MacOS
-       dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/Frameworks/
-       strip ygopro.app/Contents/MacOS/ygopro
+       mkdir -p ygopro.app/Contents/MacOS;
+       mv bin/release/ygopro ygopro.app/Contents/MacOS;
+       dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/Frameworks/;
+       strip ygopro.app/Contents/MacOS/ygopro;
        echo $CERTIFICATE | base64 — decode > cert.p12;
-       security create-keychain -p "" build.keychain
-       security unlock-keychain -p "" build.keychain
+       security create-keychain -p "" build.keychain;
+       security unlock-keychain -p "" build.keychain;
        security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign;
-       codesign --deep --sign "$(security find-identity -v -p codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app
+       codesign --deep --sign "$(security find-identity -v -p codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
     fi
 before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
