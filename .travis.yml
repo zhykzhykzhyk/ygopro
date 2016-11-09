@@ -40,9 +40,9 @@ script:
       mv bin/release/ygopro ygopro.app/Contents/MacOS;
       dylibbundler -od -b -x ./ygopro.app/Contents/MacOS/ygopro -d ./ygopro.app/Contents/Frameworks/;
       strip ygopro.app/Contents/MacOS/ygopro;
-      mkdir ygopro.app/Contents/Resources
-      mv premake/gframe/ygopro.icns ygopro.app/Contents/Resources/Icon.icns
-      defaults write "$PWD/ygopro.app/Contents/Info.plist" "CFBundleIconFile" "Icon.icns"
+      mkdir ygopro.app/Contents/Resources;
+      mv premake/gframe/ygopro.icns ygopro.app/Contents/Resources/Icon.icns;
+      defaults write "$PWD/ygopro.app/Contents/Info.plist" "CFBundleIconFile" "Icon.icns";
       echo $CERTIFICATE | base64 --decode --output cert.p12;
       security create-keychain -p "" build.keychain;
       security unlock-keychain -p "" build.keychain;
