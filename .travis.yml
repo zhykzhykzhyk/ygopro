@@ -38,7 +38,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       mkdir -p ygopro.app/Contents/MacOS;
       mv bin/release/ygopro ygopro.app/Contents/MacOS;
-      dylibbundler -x ygopro.app/Contents/MacOS/ygopro -b -d ygopro.app/Contents/Frameworks/ -p @executable_path/../Frameworks/;
+      dylibbundler -x ygopro.app/Contents/MacOS/ygopro -b -d ygopro.app/Contents/Frameworks/ -p @executable_path/../Frameworks/ -cd;
       strip ygopro.app/Contents/MacOS/ygopro;
       mkdir ygopro.app/Contents/Resources;
       mv premake/gframe/ygopro.icns ygopro.app/Contents/Resources/Icon.icns;
