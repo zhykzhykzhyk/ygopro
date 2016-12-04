@@ -24,7 +24,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew update;
       brew install freetype libevent sqlite irrlicht lua dylibbundler;
-      wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -;
+      curl --location --retry 5 https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-macosx.tar.gz | tar zfx -;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz | tar zfx -; fi
 script:
@@ -50,12 +50,12 @@ script:
       codesign --deep --keychain build.keychain --sign "$(security find-identity -v -p codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
     fi
 before_deploy:
-  - wget https://mycard.moe/ygopro/cards.cdb
-  - XZ_OPT=-9e tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb
-  - mkdir -p pics
-  - wget -O - https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
+  - curl --location --retry 5 'https://github.com/mycard/ygopro-database/archive/master.tar.gz' | tar --strip-components=1 -Jxf - ygopro-database-master/locales
+  - tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb
+  - mkdir pics
+  - curl --location --retry 5 --output 'ygopro-images-zh-CN.zip' https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
   - unzip -q -d pics ygopro-images-zh-CN.zip
-  - XZ_OPT=-9e tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics 
+  - tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics 
 deploy:
   provider: releases
   file:
