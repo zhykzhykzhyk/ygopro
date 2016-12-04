@@ -48,8 +48,8 @@ after_build:
   - ps: Start-FileDownload https://mycard.moe/ygopro/cards.cdb
   - 7z a ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb
   - mkdir pics
-  - curl -L https://github.com/mycard/deprecated-ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
-  - curl -L https://github.com/mycard/ygopro-images-field/archive/master.tar.gz | tar --strip-components=1 -C pics -zxf - ygopro-images-field-master/field
+  - curl -L https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
+  - unzip -q -d pics ygopro-images-zh-CN.zip
   - 7z a ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics
 artifacts:
   - path: ygopro-lite-$(APPVEYOR_REPO_TAG_NAME)-win32.7z

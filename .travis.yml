@@ -53,8 +53,8 @@ before_deploy:
   - wget https://mycard.moe/ygopro/cards.cdb
   - XZ_OPT=-9e tar -Jcf ygopro-lite-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb
   - mkdir -p pics
-  - wget -O - https://github.com/mycard/deprecated-ygopro-images/archive/zh-CN.tar.gz | tar --strip-components=1 -C pics -zxf -
-  - wget -O - https://github.com/mycard/ygopro-images-field/archive/master.tar.gz | tar --strip-components=1 -C pics -zxf - ygopro-images-field-master/field
+  - wget -O - https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
+  - unzip -q -d pics ygopro-images-zh-CN.zip
   - XZ_OPT=-9e tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude=ygopro-lite* ygopro* LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics 
 deploy:
   provider: releases
