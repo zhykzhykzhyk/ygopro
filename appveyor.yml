@@ -49,7 +49,7 @@ after_build:
   - 7z a ygopro-lite-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb
   - mkdir pics
   - appveyor DownloadFile https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
-  - 7z x ygopro-images-zh-CN.zip -o pics
+  - 7z x ygopro-images-zh-CN.zip -opics
   - 7z a ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.7z ygopro.exe LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics
 artifacts:
   - path: ygopro-lite-$(APPVEYOR_REPO_TAG_NAME)-win32.7z
