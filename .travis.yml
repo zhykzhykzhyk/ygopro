@@ -58,22 +58,10 @@ before_deploy:
   - unzip -q -d pics ygopro-images-zh-CN.zip
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude='.git*' ygopro.app LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics replay; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -Jcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz --exclude='.git*' ygopro LICENSE README.md lflist.conf script strings.conf system.conf textures deck cards.cdb pics replay; fi
-  # 语言包
-  - cd locales/en-US
-  - mkdir pics # 下载那个语言的卡图
-  - tar -Jcf ../../ygopro-lang-en-US-$TRAVIS_TAG.tar.xz cards.cdb strings.conf pics
-  - cd ../..
-  - cd locales/ja-JP
-  - mkdir pics
-  - tar -Jcf ../../ygopro-lang-ja-JP-$TRAVIS_TAG.tar.xz cards.cdb strings.conf pics
-  - cd ../..
-  
 deploy:
   provider: releases
   file:
     - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.xz
-    - ygopro-lang-en-US-$TRAVIS_TAG.tar.xz
-    - ygopro-lang-ja-JP-$TRAVIS_TAG.tar.xz
   api_key:
     secure: "Js+zijIaucVvTm/knFOKLQ0KTdn93g/xgka8J4EQymgqM7JizL15sHSlVKPhqIFfMQYi/AUjNs7ikzYRO4QCe09GbYniSnFQhHPyGd7bb1tzJ5a7s8MdbP6rGFZ/v/SEbuTqDCsxtGGCfy9F/WMJ1J7o6dmuFfrAXEDzTtXrQrs="
   skip_cleanup: true
