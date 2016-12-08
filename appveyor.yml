@@ -55,10 +55,14 @@ after_build:
   # 语言包
   - cd locales/en-US
   - mkdir pics # 下载那个语言的卡图
+  - curl --location --retry 5 --output 'ygopro-images-en-US.zip' https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-en-US.zip
+  - unzip -q -d pics ygopro-images-en-US.zip
   - tar -zcf ../../ygopro-lang-en-US-%APPVEYOR_REPO_TAG_NAME%.tar.gz --exclude='.git*' cards.cdb strings.conf pics
   - cd ../..
   - cd locales/ja-JP
   - mkdir pics
+  - curl --location --retry 5 --output 'ygopro-images-ja-JP.zip' https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-ja-JP.zip
+  - unzip -q -d pics ygopro-images-ja-JP.zip
   - tar -zcf ../../ygopro-lang-ja-JP-%APPVEYOR_REPO_TAG_NAME%.tar.gz --exclude='.git*' cards.cdb strings.conf pics
   - cd ../..
 artifacts:
