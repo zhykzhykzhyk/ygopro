@@ -55,11 +55,11 @@ after_build:
   # 语言包
   - cd locales/en-US
   - mkdir pics # 下载那个语言的卡图
-  - tar -Jcf ../../ygopro-lang-en-US-%APPVEYOR_REPO_TAG_NAME.tar.xz --exclude='.git*' cards.cdb strings.conf pics
+  - tar -Jcf ../../ygopro-lang-en-US-%APPVEYOR_REPO_TAG_NAME%.tar.xz --exclude='.git*' cards.cdb strings.conf pics
   - cd ../..
   - cd locales/ja-JP
   - mkdir pics
-  - tar -Jcf ../../ygopro-lang-ja-JP-%APPVEYOR_REPO_TAG_NAME.tar.xz --exclude='.git*' cards.cdb strings.conf pics
+  - tar -Jcf ../../ygopro-lang-ja-JP-%APPVEYOR_REPO_TAG_NAME%.tar.xz --exclude='.git*' cards.cdb strings.conf pics
   - cd ../..
 artifacts:
   - path: ygopro-$(APPVEYOR_REPO_TAG_NAME)-win32.tar.xz
