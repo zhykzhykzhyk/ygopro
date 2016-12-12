@@ -28,7 +28,7 @@ solution "ygo"
         targetdir "bin/release"
 
     configuration "Debug"
-        flags "Symbols"
+        symbols "On"
         defines "_DEBUG"
         targetdir "bin/debug"
 
