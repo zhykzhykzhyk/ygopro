@@ -60,7 +60,7 @@ after_build:
   - curl --location --retry 5 --output 'ygopro-starter-pack-master.zip' https://github.com/mycard/ygopro-starter-pack/archive/master.zip
   - unzip -q ygopro-starter-pack-master.zip
   - xcopy /E ygopro-starter-pack-master\* .
-  - tar -zcf ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.gz --exclude='.git*' ygopro.exe LICENSE README.md lflist.conf strings.conf system.conf cards.cdb script textures deck single pics replay
+  - tar -zcf ygopro-%APPVEYOR_REPO_TAG_NAME%-win32.tar.gz --format=posix --exclude='.git*' ygopro.exe LICENSE README.md lflist.conf strings.conf system.conf cards.cdb script textures deck single pics replay
   # 语言包
   - cd locales/en-US
   - mkdir pics # 下载那个语言的卡图
