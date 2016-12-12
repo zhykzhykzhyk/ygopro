@@ -57,7 +57,7 @@ before_deploy:
   - curl --location --retry 5 --output 'ygopro-images-zh-CN.zip' https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-zh-CN.zip
   - unzip -q -d pics ygopro-images-zh-CN.zip
   - curl --location --retry 5 --output 'ygopro-starter-pack-master.zip' https://github.com/mycard/ygopro-starter-pack/archive/master.zip
-  - 7z x ygopro-starter-pack-master.zip
+  - unzip -q ygopro-starter-pack-master.zip
   - cp -r ygopro-starter-pack-master/* .
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -zcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.gz --format=posix --exclude='.git*' ygopro.app LICENSE README.md lflist.conf strings.conf system.conf cards.cdb script textures deck single pics replay; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -zcf ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME.tar.gz --format=posix --exclude='.git*' ygopro LICENSE README.md lflist.conf strings.conf system.conf cards.cdb script textures deck single pics replay; fi
