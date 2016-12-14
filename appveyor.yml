@@ -71,7 +71,7 @@ after_build:
 test: off
 
 artifacts:
-  - path: ygopro-$(APPVEYOR_REPO_TAG_NAME)-win32-%locale%.tar.gz
+  - path: ygopro-$(APPVEYOR_REPO_TAG_NAME)-win32-$(locale).tar.gz
     name: ygopro
     
 deploy:
