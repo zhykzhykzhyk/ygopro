@@ -62,7 +62,7 @@ after_build:
   - mkdir replay
   - mkdir pics
   - curl --location --retry 5 --output 'ygopro-images-%locale%.zip' https://github.com/mycard/ygopro-images/releases/download/latest/ygopro-images-%locale%.zip
-  - unzip -q -d pics ygopro-images-zh-CN.zip
+  - unzip -q -d pics ygopro-images-%locale%.zip
   - curl --location --retry 5 --output 'ygopro-starter-pack-master.zip' https://github.com/mycard/ygopro-starter-pack/archive/master.zip
   - unzip -q ygopro-starter-pack-master.zip
   - mv ygopro-starter-pack-master/* .
