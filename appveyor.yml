@@ -59,7 +59,7 @@ after_build:
   - mv bin\release\ygopro.exe .
   #- curl --location --retry 5 'https://github.com/moecube/ygopro-database/archive/master.tar.gz' | tar --strip-components=1 -zxf - ygopro-database-master/locales
   - appveyor DownloadFile https://github.com/moecube/ygopro-database/archive/master.zip
-  - unzip -q ygopro-database-master.zip
+  - unzip -q master.zip
   - cp ygopro-database-master/locales/%locale%/* .
   - mkdir replay
   - mkdir pics
