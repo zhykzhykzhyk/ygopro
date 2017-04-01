@@ -1,5 +1,5 @@
 # ygopro
-[![Build Status](https://travis-ci.org/mycard/ygopro.svg?branch=master)](https://travis-ci.org/mycard/ygopro) [![Build status](https://ci.appveyor.com/api/projects/status/qgkqi6o0wq7qn922?svg=true)](https://ci.appveyor.com/project/zh99998/ygopro)
+[![Build Status](https://travis-ci.org/moecube/ygopro.svg?branch=master)](https://travis-ci.org/moecube/ygopro) [![Build status](https://ci.appveyor.com/api/projects/status/qgkqi6o0wq7qn922?svg=true)](https://ci.appveyor.com/project/zh99998/ygopro)
 
 A script engine for "yu-gi-oh!" and sample gui
 
