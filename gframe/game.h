@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
+#include <queue>
+#include <functional>
 
 namespace ygo {
 
@@ -82,6 +84,11 @@ public:
 	void BuildProjectionMatrix(irr::core::matrix4& mProjection, f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar);
 	void InitStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, u32 cHeight, irr::gui::CGUITTFont* font, const wchar_t* text);
 	void SetStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gui::CGUITTFont* font, const wchar_t* text, u32 pos = 0);
+
+	void InitStaticTextUnsafe(irr::gui::IGUIStaticText* pControl, u32 cWidth, u32 cHeight, irr::gui::CGUITTFont* font, const std::wstring& text);
+	void SetStaticTextUnsafe(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gui::CGUITTFont* font, const std::wstring& text, u32 pos = 0);
+
+	void BeginInvoke(std::function<void()>);
 	void LoadExpansionDB();
 	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck);
 	void RefreshReplay();
@@ -119,6 +126,7 @@ public:
 
 	Mutex gMutex;
 	Mutex gBuffer;
+	Mutex delayedOperationMutex;
 	Signal frameSignal;
 	Signal actionSignal;
 	Signal replaySignal;
@@ -130,6 +138,7 @@ public:
 
 	std::list<FadingUnit> fadingList;
 	std::vector<int> logParam;
+	std::queue<std::function<void()>> delayedOperations;
 	std::wstring chatMsg[8];
 
 	int hideChatTimer;

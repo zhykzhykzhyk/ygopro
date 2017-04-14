@@ -271,6 +271,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->ebStar->setEnabled(false);
 				mainGame->ebScale->setEnabled(false);
 				mainGame->deckBuilder.filter_effect = 0;
+				mainGame->deckBuilder.hovered_code = 0;
 				mainGame->deckBuilder.result_string[0] = L'0';
 				mainGame->deckBuilder.result_string[1] = 0;
 				mainGame->deckBuilder.results.clear();

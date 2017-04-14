@@ -597,6 +597,13 @@ void Game::MainLoop() {
 		if(imageManager.tBackGround)
 			driver->draw2DImage(imageManager.tBackGround, recti(0, 0, 1024, 640), recti(0, 0, imageManager.tBackGround->getOriginalSize().Width, imageManager.tBackGround->getOriginalSize().Height));
 		gMutex.Lock();
+		delayedOperationMutex.Lock();
+		while (!delayedOperations.empty())
+		{
+			delayedOperations.front()();
+			delayedOperations.pop();
+		}
+		delayedOperationMutex.Unlock();
 		if(dInfo.isStarted) {
 			DrawBackGround();
 			DrawCards();
@@ -674,13 +681,22 @@ void Game::BuildProjectionMatrix(irr::core::matrix4& mProjection, f32 left, f32 
 	mProjection[11] = 1.0f;
 	mProjection[14] = znear * zfar / (znear - zfar);
 }
+
 void Game::InitStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, u32 cHeight, irr::gui::CGUITTFont* font, const wchar_t* text) {
-	SetStaticText(pControl, cWidth, font, text);
+	BeginInvoke(std::bind(&Game::InitStaticTextUnsafe, this, pControl, cWidth, cHeight, font, std::wstring(text)));
+}
+
+void Game::SetStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gui::CGUITTFont* font, const wchar_t* text, u32 pos) {
+	BeginInvoke(std::bind(&Game::SetStaticTextUnsafe, this, pControl, cWidth, font, std::wstring(text), pos));
+}
+
+void Game::InitStaticTextUnsafe(irr::gui::IGUIStaticText* pControl, u32 cWidth, u32 cHeight, irr::gui::CGUITTFont* font, const std::wstring& text) {
+	SetStaticTextUnsafe(pControl, cWidth, font, text);
 	if(font->getDimension(dataManager.strBuffer).Height <= cHeight) {
 		scrCardText->setVisible(false);
 		return;
 	}
-	SetStaticText(pControl, cWidth-25, font, text);
+	SetStaticTextUnsafe(pControl, cWidth-25, font, text);
 	u32 fontheight = font->getDimension(L"A").Height + font->getKerningHeight();
 	u32 step = (font->getDimension(dataManager.strBuffer).Height - cHeight) / fontheight + 1;
 	scrCardText->setVisible(true);
@@ -688,10 +704,10 @@ void Game::InitStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, u32 cH
 	scrCardText->setMax(step);
 	scrCardText->setPos(0);
 }
-void Game::SetStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gui::CGUITTFont* font, const wchar_t* text, u32 pos) {
+void Game::SetStaticTextUnsafe(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gui::CGUITTFont* font, const std::wstring &text, u32 pos) {
 	int pbuffer = 0;
 	u32 _width = 0, _height = 0;
-	for(size_t i = 0; text[i] != 0 && i < wcslen(text); ++i) {
+	for(size_t i = 0; text[i] != 0 && i < text.length(); ++i) {
 		u32 w = font->getCharDimension(text[i]).Width;
 		if(text[i] == L'\n') {
 			dataManager.strBuffer[pbuffer++] = L'\n';
@@ -713,6 +729,12 @@ void Game::SetStaticText(irr::gui::IGUIStaticText* pControl, u32 cWidth, irr::gu
 	dataManager.strBuffer[pbuffer] = 0;
 	pControl->setText(dataManager.strBuffer);
 }
+void Game::BeginInvoke(std::function<void()> op) {
+	delayedOperationMutex.Lock();
+	delayedOperations.push(std::move(op));
+	delayedOperationMutex.Unlock();
+}
+
 void Game::LoadExpansionDB() {
 #ifdef _WIN32
 	char fpath[1000];
