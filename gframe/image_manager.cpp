@@ -7,6 +7,8 @@ ImageManager imageManager;
 bool ImageManager::Initial() {
 	tCover[0] = driver->getTexture("textures/cover.jpg");
 	tCover[1] = driver->getTexture("textures/cover2.jpg");
+	if(!tCover[1])
+		tCover[1] = tCover[0];
 	tUnknown = driver->getTexture("textures/unknown.jpg");
 	tAct = driver->getTexture("textures/act.png");
 	tAttack = driver->getTexture("textures/attack.png");
@@ -18,6 +20,7 @@ bool ImageManager::Initial() {
 	tMask = driver->getTexture("textures/mask.png");
 	tEquip = driver->getTexture("textures/equip.png");
 	tTarget = driver->getTexture("textures/target.png");
+	tChainTarget = driver->getTexture("textures/chaintarget.png");
 	tLim = driver->getTexture("textures/lim.png");
 	tOT = driver->getTexture("textures/ot.png");
 	tHand[0] = driver->getTexture("textures/f1.jpg");
@@ -25,9 +28,15 @@ bool ImageManager::Initial() {
 	tHand[2] = driver->getTexture("textures/f3.jpg");
 	tBackGround = driver->getTexture("textures/bg.jpg");
 	tBackGround_menu = driver->getTexture("textures/bg_menu.jpg");
+	if(!tBackGround_menu)
+		tBackGround_menu = tBackGround;
 	tBackGround_deck = driver->getTexture("textures/bg_deck.jpg");
-	tField = driver->getTexture("textures/field2.png");
-	tFieldTransparent = driver->getTexture("textures/field-transparent2.png");
+	if(!tBackGround_deck)
+		tBackGround_deck = tBackGround;
+	tField[0] = driver->getTexture("textures/field2.png");
+	tFieldTransparent[0] = driver->getTexture("textures/field-transparent2.png");
+	tField[1] = driver->getTexture("textures/field3.png");
+	tFieldTransparent[1] = driver->getTexture("textures/field-transparent3.png");
 	return true;
 }
 void ImageManager::SetDevice(irr::IrrlichtDevice* dev) {
