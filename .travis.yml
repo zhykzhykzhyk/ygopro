@@ -72,7 +72,7 @@ deploy:
   file:
     - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME-${locale}.tar.gz
   api_key:
-    secure: "fZCfiDUD7+cyHEjn7nGx5yS+OMjdEWKQoIA3lEkrOoKiznU+oYAF+0Thzzx/2Rc3BFWo/bcON3ajAerRolTXmbkxljWDYce0lqj1n2EwqOEjXjnPMM3OWXFA2D945DZP4CWhaGZLGNcTQSt5zmb3qYYtUVS/cZJETXGAt1x1skk="
+    secure: "NiIw0pDfx6x2SbvgtqBSxdMSexN3MyGowNIEb6tuEBbvnE8RQ+sQQWal9EXxQGlWC0ro+/Zot07yXQKVszdCafls7bUO9Yb2hIbTaRuiruR9+DUs3LGwvqH40oEZGvVcMmXYiR0MCRxB6kXGk0Wmt+a15c4R6fq2VNNw2dPqbag="
   skip_cleanup: true
   on:
     tags: true
