@@ -72,12 +72,11 @@ deploy:
   provider: releases
   file:
   - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME-${locale}.tar.gz
-  user: zh99998
   skip_cleanup: true
   on:
     tags: true
-  password:
-    secure: Ow8UgZfXFNVhnPaX3mRpplDsgDCOZvj7g4TXf9oTeN0mHB/F5MX6zAxuN3iCcvLqBxuOiAKSTyzHuftjPSM+sWdHjd88Qw48Vqwu26vDrbYOF9cHP2LQe4OPVXWS0ngjkC2vrDhPZadMZnyYTs/r2MRsxJnj/u+jkVYnEnkfMes=
+  api-key:
+    secure: j7YxYAyoQr1albVJIypwloeJXtZMj11FtqmCDyJ8QGiFk2431o0KMNvN1tC2pK/x08ntN5iVzwEfWh7owDSBeu1HDJo7H7w69s5Rt3UfJE4bw5G2RM6PhG8ZQBwIPkXyXULPTjj3YQRFvcPdBusndQVPhFe/staGLa/t+KOzMyw=
 branches:
   only:
   - master
