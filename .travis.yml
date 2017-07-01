@@ -5,7 +5,7 @@ os:
 env:
   matrix:
     - locale: zh-CN
-    - locale: ja-JP
+#    - locale: ja-JP
     - locale: en-US
     
 sudo: required
@@ -72,7 +72,7 @@ deploy:
   file:
     - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME-${locale}.tar.gz
   api_key:
-    secure: "hLaiTSaQH+Od/0oFUskDljWo7KYESF5khLk1lW+fo4U8/VUQ7Z5Ncj2KSk+vwu7w3T0U5svuYxDf7ITOuvcgwvQpDMCAVbedJMkjgQG2/qI3Q/9HhDyjTr9jqCvvaNlJN/hSJ+l2t0svjgKl9kjQ+ax/Ly0ZJ+QXk6aEyEEMOSw="
+    secure: "fZCfiDUD7+cyHEjn7nGx5yS+OMjdEWKQoIA3lEkrOoKiznU+oYAF+0Thzzx/2Rc3BFWo/bcON3ajAerRolTXmbkxljWDYce0lqj1n2EwqOEjXjnPMM3OWXFA2D945DZP4CWhaGZLGNcTQSt5zmb3qYYtUVS/cZJETXGAt1x1skk="
   skip_cleanup: true
   on:
     tags: true

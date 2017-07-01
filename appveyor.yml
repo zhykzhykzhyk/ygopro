@@ -3,7 +3,7 @@ version: '{build}'
 environment:
   matrix:
     - locale: zh-CN
-    - locale: ja-JP
+#    - locale: ja-JP
     - locale: en-US
 
 install:
