@@ -1,0 +1,257 @@
+diff -ur irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/AppDelegate.h irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/AppDelegate.h
+--- irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/AppDelegate.h	2017-04-09 16:36:40.000000000 +0800
++++ irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/AppDelegate.h	2017-04-09 16:09:48.000000000 +0800
+@@ -10,7 +10,7 @@
+ #import <Cocoa/Cocoa.h>
+ #import "CIrrDeviceMacOSX.h"
+ 
+-@interface AppDelegate : NSObject
++@interface AppDelegate : NSObject <NSApplicationDelegate, NSTextInputClient>
+ {
+ 	BOOL			_quit;
+ 	irr::CIrrDeviceMacOSX	*_device;
+diff -ur irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/AppDelegate.mm irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/AppDelegate.mm
+--- irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/AppDelegate.mm	2017-04-09 16:36:40.000000000 +0800
++++ irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/AppDelegate.mm	2017-04-09 16:22:43.000000000 +0800
+@@ -74,6 +74,90 @@
+ 	return (_quit);
+ }
+ 
++/* The receiver inserts string replacing the content specified by replacementRange. string can be either an NSString or NSAttributedString instance.
++ */
++- (void)insertText:(id)string replacementRange:(NSRange)replacementRange
++{
++	if ([string isKindOfClass:[NSAttributedString class]])
++	{
++		_device->handleInputEvent([[string string] UTF8String]);
++	}
++	else
++	{
++		_device->handleInputEvent([string UTF8String]);
++	}
++}
++
++/* The receiver invokes the action specified by selector.
++ */
++- (void)doCommandBySelector:(SEL)selector
++{
++}
++
++/* The receiver inserts string replacing the content specified by replacementRange. string can be either an NSString or NSAttributedString instance. selectedRange specifies the selection inside the string being inserted; hence, the location is relative to the beginning of string. When string is an NSString, the receiver is expected to render the marked text with distinguishing appearance (i.e. NSTextView renders with -markedTextAttributes).
++ */
++- (void)setMarkedText:(id)string selectedRange:(NSRange)selectedRange replacementRange:(NSRange)replacementRange
++{
++}
++
++/* The receiver unmarks the marked text. If no marked text, the invocation of this method has no effect.
++ */
++- (void)unmarkText
++{
++}
++
++/* Returns the selection range. The valid location is from 0 to the document length.
++ */
++- (NSRange)selectedRange
++{
++	NSRange range = {0, 0};
++	return range;
++}
++
++/* Returns the marked range. Returns {NSNotFound, 0} if no marked range.
++ */
++- (NSRange)markedRange
++{
++	NSRange range = {NSNotFound, 0};
++	return range;
++}
++
++/* Returns whether or not the receiver has marked text.
++ */
++- (BOOL)hasMarkedText
++{
++	return NO;
++}
++
++/* Returns attributed string specified by range. It may return nil. If non-nil return value and actualRange is non-NULL, it contains the actual range for the return value. The range can be adjusted from various reasons (i.e. adjust to grapheme cluster boundary, performance optimization, etc).
++ */
++- (nullable NSAttributedString *)attributedSubstringForProposedRange:(NSRange)range actualRange:(nullable NSRangePointer)actualRange
++{
++	return nil;
++}
++
++/* Returns an array of attribute names recognized by the receiver.
++ */
++- (NSArray<NSString *> *)validAttributesForMarkedText
++{
++	return @[];
++}
++
++/* Returns the first logical rectangular area for range. The return value is in the screen coordinate. The size value can be negative if the text flows to the left. If non-NULL, actuallRange contains the character range corresponding to the returned area.
++ */
++- (NSRect)firstRectForCharacterRange:(NSRange)range actualRange:(nullable NSRangePointer)actualRange
++{
++	NSRect rect = {0, 0, 20, 20};
++	return rect;
++}
++
++/* Returns the index for character that is nearest to point. point is in the screen coordinate system.
++ */
++- (NSUInteger)characterIndexForPoint:(NSPoint)point
++{
++	return 0;
++}
++
+ @end
+ 
+ #endif // _IRR_COMPILE_WITH_OSX_DEVICE_
+diff -ur irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.h irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.h
+--- irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.h	2017-04-09 16:36:40.000000000 +0800
++++ irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.h	2017-04-09 14:02:16.000000000 +0800
+@@ -20,6 +20,7 @@
+ #include "IGUIEnvironment.h"
+ #include "ICursorControl.h"
+ 
++#include <Cocoa/Cocoa.h>
+ #include <OpenGL/OpenGL.h>
+ #include <map>
+ 
+@@ -95,6 +96,7 @@
+ 		void setMouseLocation(int x, int y);
+ 		void setResize(int width, int height);
+ 		void setCursorVisible(bool visible);
++		void handleInputEvent(const char *str);
+ 
+ 	private:
+ 
+@@ -228,6 +230,7 @@
+ 		NSWindow *Window;
+ 		CGLContextObj CGLContext;
+ 		NSOpenGLContext *OGLContext;
++		NSTextInputContext *TextInputContext;
+ 		NSBitmapImageRep *SoftwareDriverTarget;
+ 		std::map<int,int> KeyCodes;
+ 		int DeviceWidth;
+diff -ur irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm
+--- irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm	2017-04-09 16:36:40.000000000 +0800
++++ irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm	2017-04-09 16:17:19.000000000 +0800
+@@ -496,7 +496,7 @@
+ 		{
+ 			[[NSAutoreleasePool alloc] init];
+ 			[NSApplication sharedApplication];
+-			[NSApp setDelegate:(id<NSFileManagerDelegate>)[[[AppDelegate alloc] initWithDevice:this] autorelease]];
++			[NSApp setDelegate:[[[AppDelegate alloc] initWithDevice:this] autorelease]];
+ 			[NSBundle loadNibNamed:@"MainMenu" owner:[NSApp delegate]];
+ 			[NSApp finishLaunching];
+ 		}
+@@ -524,6 +524,8 @@
+ 
+ 	setResizable(false);
+ 	CursorControl = new CCursorControl(CreationParams.WindowSize, this);
++	TextInputContext = [[NSTextInputContext alloc] initWithClient:(AppDelegate *)[NSApp delegate]];
++	[TextInputContext activate];
+ 
+ 	createDriver();
+ 	createGUIAndScene();
+@@ -591,7 +593,32 @@
+ 	IsActive = false;
+ 	CGLContext = NULL;
+ }
++	
++void CIrrDeviceMacOSX::handleInputEvent(const char *cStr)
++{
++	SEvent ievent;
++	
++	// TODO: we should have such a function in core::string
++	size_t lenOld = strlen(cStr);
++	wchar_t *ws = new wchar_t[lenOld + 1];
++	size_t len = mbstowcs(ws,cStr,lenOld);
++	ws[len] = 0;
++	irr::core::stringw widep(ws);
++	delete[] ws;
++	
++	ievent.EventType = irr::EET_KEY_INPUT_EVENT;
++	ievent.KeyInput.Key = (irr::EKEY_CODE)0;
++	ievent.KeyInput.PressedDown = true;
++	ievent.KeyInput.Shift = false;
++	ievent.KeyInput.Control = false;
+ 
++	for (int i = 0; i < widep.size(); ++i)
++	{
++		ievent.KeyInput.Char = widep[i];
++		postEventFromUser(ievent);
++	}
++}
++	
+ bool CIrrDeviceMacOSX::createWindow()
+ {
+ 	CGDisplayErr error;
+@@ -979,6 +1006,7 @@
+ 		switch([(NSEvent *)event type])
+ 		{
+ 			case NSKeyDown:
++				[TextInputContext handleEvent:event];
+ 				postKeyEvent(event,ievent,true);
+ 				break;
+ 
+@@ -1199,29 +1227,29 @@
+ 			}
+ 			else
+ 			{
+-				cStr = (unsigned char *)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
++				cStr = (unsigned char *)[str UTF8String];
+ 				if (cStr != NULL && strlen((char*)cStr) > 0)
+ 				{
+ 					mchar = cStr[0];
+ 					mkey = toupper(mchar);
+-					if ([(NSEvent *)event modifierFlags] & NSCommandKeyMask)
+-					{
+-						if (mkey == 'C' || mkey == 'V' || mkey == 'X')
+-						{
+-							mchar = 0;
+-							skipCommand = true;
+-						}
+-					}
+ 				}
+ 			}
+ 		}
+-
++		if ([(NSEvent *)event modifierFlags] & NSCommandKeyMask)
++		{
++			if (mkey == 'C' || mkey == 'V' || mkey == 'X')
++			{
++				mchar = 0;
++				skipCommand = true;
++			}
++		}
++		
+ 		ievent.EventType = irr::EET_KEY_INPUT_EVENT;
+ 		ievent.KeyInput.Key = (irr::EKEY_CODE)mkey;
+ 		ievent.KeyInput.PressedDown = pressed;
+ 		ievent.KeyInput.Shift = ([(NSEvent *)event modifierFlags] & NSShiftKeyMask) != 0;
+ 		ievent.KeyInput.Control = ([(NSEvent *)event modifierFlags] & NSControlKeyMask) != 0;
+-		ievent.KeyInput.Char = mchar;
++		ievent.KeyInput.Char = 0; // mchar;
+ 
+ 		if (skipCommand)
+ 			ievent.KeyInput.Control = true;
+diff -ur irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/OSXClipboard.mm irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/OSXClipboard.mm
+--- irrlicht-1.8.4.origin/source/Irrlicht/MacOSX/OSXClipboard.mm	2017-04-09 16:36:40.000000000 +0800
++++ irrlicht-1.8.4.patched/source/Irrlicht/MacOSX/OSXClipboard.mm	2017-04-09 03:13:03.000000000 +0800
+@@ -13,7 +13,7 @@
+ 
+ 	if ((text != NULL) && (strlen(text) > 0))
+ 	{
+-		str = [NSString stringWithCString:text encoding:NSWindowsCP1252StringEncoding];
++		str = [NSString stringWithUTF8String:text];
+ 		board = [NSPasteboard generalPasteboard];
+ 		[board declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NSApp];
+ 		[board setString:str forType:NSStringPboardType];
+@@ -30,7 +30,7 @@
+ 	board = [NSPasteboard generalPasteboard];
+ 	str = [board stringForType:NSStringPboardType];
+ 	if (str != nil)
+-		result = (char*)[str cStringUsingEncoding:NSWindowsCP1252StringEncoding];
++		result = (char*)[str UTF8String];
+ 	return (result);
+ }
+ 

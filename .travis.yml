@@ -24,8 +24,9 @@ addons:
 before_install:
 - git submodule update --init --recursive
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install freetype libevent
-  sqlite irrlicht lua dylibbundler; curl --location --retry 5 https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz
+  sqlite lua dylibbundler; curl --location --retry 5 https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz
   | tar zfx -; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl --retry 5 --connect-timeout 30 --location --remote-header-name --remote-name http://downloads.sourceforge.net/irrlicht/irrlicht-1.8.4.zip; unzip irrlicht-1.8.4.zip ; cd irrlicht-1.8.4/ ; cp ../premake/irrlicht/irrlicht-mac.patch . ; patch -p1 < irrlicht-mac.patch ; cd source/Irrlicht/MacOSX/ ; xcodebuild -project MacOSX.xcodeproj ; cp build/Release/libIrrlicht.a /usr/local/lib/ ;  cp -r ../../../include /usr/local/include/irrlicht ; cd ../../../../ ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-linux.tar.gz
   | tar zfx -; fi
 script:
@@ -67,7 +68,7 @@ before_deploy:
 deploy:
   provider: releases
   file:
-  - ygopro-mac-test-${locale}.tar.gz
+  - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME-${locale}.tar.gz
   skip_cleanup: true
   overwrite: true
   on:
