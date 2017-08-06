@@ -15,7 +15,7 @@ solution "ygo"
 
     configuration "macosx"
         defines { "LUA_USE_MACOSX" }
-        includedirs { "/usr/local/include/", "/usr/local/include/freetype2" }
+        includedirs { "/usr/local/include/", "/usr/local/include/irrlicht", "/usr/local/include/freetype2" }
         libdirs { "/usr/local/lib", "/usr/X11/lib" }
         buildoptions { "-stdlib=libc++" }
         links { "OpenGL.framework", "Cocoa.framework", "IOKit.framework" }
