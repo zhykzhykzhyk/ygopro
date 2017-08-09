@@ -39,16 +39,20 @@ script:
 - cd ..
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro;
   fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir -p ygopro.app/Contents/MacOS; mv
-  bin/release/ygopro ygopro.app/Contents/MacOS; dylibbundler -x ygopro.app/Contents/MacOS/ygopro
-  -b -d ygopro.app/Contents/Frameworks/ -p @executable_path/../Frameworks/ -cd; strip
-  ygopro.app/Contents/MacOS/ygopro; mkdir ygopro.app/Contents/Resources; mv premake/gframe/ygopro.icns
-  ygopro.app/Contents/Resources/Icon.icns; defaults write "$PWD/ygopro.app/Contents/Info.plist"
-  "CFBundleIconFile" "Icon.icns"; echo $CERTIFICATE | base64 --decode --output cert.p12;
-  security create-keychain -p "" build.keychain; security unlock-keychain -p "" build.keychain;
-  security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign;
-  codesign --deep --keychain build.keychain --sign "$(security find-identity -v -p
-  codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    mkdir -p ygopro.app/Contents/MacOS;
+    mv bin/release/ygopro ygopro.app/Contents/MacOS;
+    dylibbundler -x ygopro.app/Contents/MacOS/ygopro -b -d ygopro.app/Contents/Frameworks/ -p @executable_path/../Frameworks/ -cd;
+    strip ygopro.app/Contents/MacOS/ygopro; mkdir ygopro.app/Contents/Resources;
+    mv premake/gframe/ygopro.icns ygopro.app/Contents/Resources/Icon.icns;
+    defaults write "$PWD/ygopro.app/Contents/Info.plist" "CFBundleIconFile" "Icon.icns";
+    if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+      echo $CERTIFICATE | base64 --decode --output cert.p12;
+      security create-keychain -p "" build.keychain; security unlock-keychain -p "" build.keychain;
+      security import cert.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign;
+      codesign --deep --keychain build.keychain --sign "$(security find-identity -v -p
+      codesigning build.keychain | head -1 | grep -o '".*"' | tr -d '"')" ygopro.app;
+    fi
   fi
 before_deploy:
 - curl --location --retry 5 'https://github.com/moecube/ygopro-database/archive/master.tar.gz'
