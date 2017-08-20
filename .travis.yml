@@ -1,9 +1,11 @@
 language: cpp
 os:
+- linux
 - osx
 env:
   matrix:
   - locale: zh-CN
+  - locale: en-US
 sudo: required
 dist: trusty
 osx_image: xcode8
@@ -60,6 +62,8 @@ before_deploy:
 - cp locales/${locale}/* .
 - mkdir replay
 - mkdir pics
+- curl --location --retry 5 --output "ygopro-images-${locale}.zip" https://github.com/moecube/ygopro-images/releases/download/latest/ygopro-images-${locale}.zip
+- unzip -q -d pics ygopro-images-${locale}.zip
 - curl --location --retry 5 --output 'ygopro-starter-pack-master.zip' https://github.com/moecube/ygopro-starter-pack/archive/master.zip
 - unzip -q ygopro-starter-pack-master.zip
 - mv ygopro-starter-pack-master/* .
@@ -74,8 +78,11 @@ deploy:
   file:
   - ygopro-$TRAVIS_TAG-$TRAVIS_OS_NAME-${locale}.tar.gz
   skip_cleanup: true
-  overwrite: true
   on:
     tags: true
   api-key:
     secure: j7YxYAyoQr1albVJIypwloeJXtZMj11FtqmCDyJ8QGiFk2431o0KMNvN1tC2pK/x08ntN5iVzwEfWh7owDSBeu1HDJo7H7w69s5Rt3UfJE4bw5G2RM6PhG8ZQBwIPkXyXULPTjj3YQRFvcPdBusndQVPhFe/staGLa/t+KOzMyw=
+branches:
+  only:
+  - master
+  - /\d+\..+/
