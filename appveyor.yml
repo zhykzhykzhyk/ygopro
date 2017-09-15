@@ -36,7 +36,7 @@ install:
   - tar xf lua-5.2.4.tar.gz
   - move lua-5.2.4\src lua
   
-  - bash -c "curl --retry 5 --connect-timeout 30 --location --remote-header-name --remote-name https://www.sqlite.org/2016/sqlite-amalgamation-3200100.zip ; exit 0"
+  - bash -c "curl --retry 5 --connect-timeout 30 --location --remote-header-name --remote-name https://www.sqlite.org/2017/sqlite-amalgamation-3200100.zip ; exit 0"
   - 7z x sqlite-amalgamation-3200100.zip
   - move sqlite-amalgamation-3200100 sqlite3
 
