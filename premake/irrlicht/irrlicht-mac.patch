@@ -94,7 +94,7 @@ index f629588..d2fefae 100644
  	private:
  
 diff --git a/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm b/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm
-index ad493fc..b4b1a3e 100644
+index ad493fc..8692d0c 100644
 --- a/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm
 +++ b/source/Irrlicht/MacOSX/CIrrDeviceMacOSX.mm
 @@ -496,7 +496,7 @@ CIrrDeviceMacOSX::CIrrDeviceMacOSX(const SIrrlichtCreationParameters& param)
@@ -149,31 +149,46 @@ index ad493fc..b4b1a3e 100644
  			newSwapInterval = (CreationParams.Vsync) ? 1 : 0;
  			CGLSetParameter(CGLContext,kCGLCPSwapInterval,&newSwapInterval);
  		}
-+		
++
 +		[[Window contentView] addSubview:(AppDelegate*)[NSApp delegate]];
  	}
  
  	return (result);
-@@ -971,6 +1005,18 @@ bool CIrrDeviceMacOSX::run()
+@@ -971,6 +1005,33 @@ bool CIrrDeviceMacOSX::run()
  	os::Timer::tick();
  	storeMouseLocation();
  
 +	auto focusElement = getGUIEnvironment()->getFocus();
 +	bool editing = focusElement && focusElement->getType() == irr::gui::EGUIET_EDIT_BOX;
-+	
++
 +	if (!editing)
 +	{
 +		[Window makeFirstResponder:nil];
 +	}
 +	else
 +	{
-+		[Window makeFirstResponder:(AppDelegate*)[NSApp delegate]];
++		auto textView = (NSTextView*)[NSApp delegate];
++		auto crect = focusElement->getAbsolutePosition();
++
++		// ensure font height enough to fill the rect, otherwize ime window will overlaps the edit box
++		[textView setFont:[NSFont userFontOfSize:crect.getHeight()]];
++
++		// change origin from top left to bottom right
++		NSRect rect = {
++			crect.UpperLeftCorner.X,
++			[[textView superview] frame].size.height - crect.LowerRightCorner.Y,
++			crect.getWidth(), crect.getHeight(),
++		};
++		[textView setFrame:rect];
++
++		// start to receive input events
++		[Window makeFirstResponder:textView];
 +	}
 +
  	event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantPast] inMode:NSDefaultRunLoopMode dequeue:YES];
  	if (event != nil)
  	{
-@@ -979,6 +1025,13 @@ bool CIrrDeviceMacOSX::run()
+@@ -979,6 +1040,13 @@ bool CIrrDeviceMacOSX::run()
  		switch([(NSEvent *)event type])
  		{
  			case NSKeyDown:
@@ -183,11 +198,11 @@ index ad493fc..b4b1a3e 100644
 +					[NSApp sendEvent:event];
 +					break;
 +				}
-+				
++
  				postKeyEvent(event,ievent,true);
  				break;
  
-@@ -1199,22 +1252,22 @@ void CIrrDeviceMacOSX::postKeyEvent(void *event,irr::SEvent &ievent,bool pressed
+@@ -1199,22 +1267,22 @@ void CIrrDeviceMacOSX::postKeyEvent(void *event,irr::SEvent &ievent,bool pressed
  			}
  			else
  			{
