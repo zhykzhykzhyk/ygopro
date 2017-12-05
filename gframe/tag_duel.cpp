@@ -222,16 +222,23 @@ void TagDuel::PlayerReady(DuelPlayer* dp, bool is_ready) {
 	if(dp->type > 3 || ready[dp->type] == is_ready)
 		return;
 	if(is_ready) {
-		bool allow_ocg = host_info.rule == 0 || host_info.rule == 2;
-		bool allow_tcg = host_info.rule == 1 || host_info.rule == 2;
-		int res = host_info.no_check_deck ? false : deckManager.CheckLFList(pdeck[dp->type], host_info.lflist, allow_ocg, allow_tcg);
-		if(res) {
+		unsigned int deckerror = 0;
+		if(!host_info.no_check_deck) {
+			if(deck_error[dp->type]) {
+				deckerror = (DECKERROR_UNKNOWNCARD << 28) + deck_error[dp->type];
+			} else {
+				bool allow_ocg = host_info.rule == 0 || host_info.rule == 2;
+				bool allow_tcg = host_info.rule == 1 || host_info.rule == 2;
+				deckerror = deckManager.CheckDeck(pdeck[dp->type], host_info.lflist, allow_ocg, allow_tcg);
+			}
+		}
+		if(deckerror) {
 			STOC_HS_PlayerChange scpc;
 			scpc.status = (dp->type << 4) | PLAYERCHANGE_NOTREADY;
 			NetServer::SendPacketToPlayer(dp, STOC_HS_PLAYER_CHANGE, scpc);
 			STOC_ErrorMsg scem;
 			scem.msg = ERRMSG_DECKERROR;
-			scem.code = res;
+			scem.code = deckerror;
 			NetServer::SendPacketToPlayer(dp, STOC_ERROR_MSG, scem);
 			return;
 		}
@@ -256,7 +263,7 @@ void TagDuel::UpdateDeck(DuelPlayer* dp, void* pdata) {
 	char* deckbuf = (char*)pdata;
 	int mainc = BufferIO::ReadInt32(deckbuf);
 	int sidec = BufferIO::ReadInt32(deckbuf);
-	deckManager.LoadDeck(pdeck[dp->type], (int*)deckbuf, mainc, sidec);
+	deck_error[dp->type] = deckManager.LoadDeck(pdeck[dp->type], (int*)deckbuf, mainc, sidec);
 }
 void TagDuel::StartDuel(DuelPlayer* dp) {
 	if(dp != host_player)
@@ -1469,8 +1476,10 @@ void TagDuel::RefreshMzone(int player, int flag, int use_cache) {
 	int pid = (player == 0) ? 0 : 2;
 	NetServer::SendBufferToPlayer(players[pid], STOC_GAME_MSG, query_buffer, len + 3);
 	NetServer::ReSendToPlayer(players[pid + 1]);
-	for (int i = 0; i < 5; ++i) {
+	int qlen = 0;
+	while(qlen < len) {
 		int clen = BufferIO::ReadInt32(qbuf);
+		qlen += clen;
 		if (clen == 4)
 			continue;
 		if (qbuf[11] & POS_FACEDOWN)
@@ -1493,8 +1502,10 @@ void TagDuel::RefreshSzone(int player, int flag, int use_cache) {
 	int pid = (player == 0) ? 0 : 2;
 	NetServer::SendBufferToPlayer(players[pid], STOC_GAME_MSG, query_buffer, len + 3);
 	NetServer::ReSendToPlayer(players[pid + 1]);
-	for (int i = 0; i < 8; ++i) {
+	int qlen = 0;
+	while(qlen < len) {
 		int clen = BufferIO::ReadInt32(qbuf);
+		qlen += clen;
 		if (clen == 4)
 			continue;
 		if (qbuf[11] & POS_FACEDOWN)
@@ -1515,9 +1526,9 @@ void TagDuel::RefreshHand(int player, int flag, int use_cache) {
 	BufferIO::WriteInt8(qbuf, LOCATION_HAND);
 	int len = query_field_card(pduel, player, LOCATION_HAND, flag | QUERY_IS_PUBLIC, (unsigned char*)qbuf, use_cache);
 	NetServer::SendBufferToPlayer(cur_player[player], STOC_GAME_MSG, query_buffer, len + 3);
-	int qlen = 0, slen;
+	int qlen = 0;
 	while(qlen < len) {
-		slen = BufferIO::ReadInt32(qbuf);
+		int slen = BufferIO::ReadInt32(qbuf);
 		int qflag = *(int*)qbuf;
 		int pos = slen - 8;
 		if(qflag & QUERY_LSCALE)
