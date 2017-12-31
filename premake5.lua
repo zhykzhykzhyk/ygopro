@@ -17,7 +17,7 @@ solution "ygo"
         libdirs { "/usr/local/lib" }
 
     configuration "macosx"
-        defines { "LUA_USE_MACOSX" }
+        defines { "LUA_USE_MACOSX", "LUA_COMPAT_5_2" }
         includedirs { "/usr/local/include", "/usr/local/include/*" }
         libdirs { "/usr/local/lib", "/usr/X11/lib" }
         buildoptions { "-stdlib=libc++" }
