@@ -20,7 +20,6 @@ addons:
     - libevent-dev
     - libsqlite3-dev
     - libirrlicht-dev
-    - liblua5.2-dev
     - libgl1-mesa-dev
     - libglu-dev
 before_install:
@@ -30,13 +29,11 @@ before_install:
   | tar zfx -; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl --retry 5 --connect-timeout 30 --location --remote-header-name --remote-name http://downloads.sourceforge.net/irrlicht/irrlicht-1.8.4.zip; unzip irrlicht-1.8.4.zip ; cd irrlicht-1.8.4/ ; cp ../premake/irrlicht/irrlicht-mac.patch . ; patch -p1 < irrlicht-mac.patch ; cd source/Irrlicht/MacOSX/ ; xcodebuild -project MacOSX.xcodeproj ; cp build/Release/libIrrlicht.a /usr/local/lib/ ;  cp -r ../../../include /usr/local/include/irrlicht ; cd ../../../../ ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha12/premake-5.0.0-alpha12-linux.tar.gz
-  | tar zfx -; fi
+  | tar zfx - ; wget -O - https://www.lua.org/ftp/lua-5.3.4.tar.gz | tar zfx -; cd lua-5.3.4; sudo make linux install; cd .. ; fi
 script:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./premake5 gmake --cc=clang; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./premake5 gmake; fi
 - cd build
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sed -i 's/-llua/-llua5.2/g' ygopro.make;
-  fi
 - make config=release ygopro
 - cd ..
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv bin/release/ygopro ./; strip ygopro;
