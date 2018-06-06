@@ -61,7 +61,7 @@ after_build:
   - cp locales/%locale%/* .
   - mkdir replay
   - mkdir pics
-  - curl --location --retry 5 --output ygopro-images-%locale%.zip https://github.com/moecube/ygopro-images/releases/download/latest/ygopro-images-%locale%.zip
+  - curl --location --retry 5 --output ygopro-images-%locale%.zip https://github.com/zh99998/ygopro-images/releases/download/latest/ygopro-images-%locale%.zip
   - unzip -q -d pics ygopro-images-%locale%.zip
   - curl --location --retry 5 --output ygopro-starter-pack-master.zip https://github.com/moecube/ygopro-starter-pack/archive/master.zip
   - unzip -q ygopro-starter-pack-master.zip
