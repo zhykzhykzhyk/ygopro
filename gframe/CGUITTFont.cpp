@@ -276,6 +276,9 @@ bool CGUITTFont::load(const io::path& filename, const u32 size, const bool antia
 		face = new SGUITTFace();
 		c_faces.set(filename, face);
 
+		int faceIndex = 0;
+		if (strcmp(filename.c_str(), "/System/Library/Fonts/PingFang.ttc") == 0) faceIndex = 2;
+
 		if (filesystem) {
 			// Read in the file data.
 			io::IReadFile* file = filesystem->createAndOpenFile(filename);
@@ -293,7 +296,7 @@ bool CGUITTFont::load(const io::path& filename, const u32 size, const bool antia
 			file->drop();
 
 			// Create the face.
-			if (FT_New_Memory_Face(c_library, face->face_buffer, face->face_buffer_size, 0, &face->face)) {
+			if (FT_New_Memory_Face(c_library, face->face_buffer, face->face_buffer_size, faceIndex, &face->face)) {
 				if (logger) logger->log(L"CGUITTFont", L"FT_New_Memory_Face failed.", irr::ELL_INFORMATION);
 
 				c_faces.remove(filename);
@@ -303,7 +306,7 @@ bool CGUITTFont::load(const io::path& filename, const u32 size, const bool antia
 			}
 		} else {
 			core::ustring converter(filename);
-			if (FT_New_Face(c_library, reinterpret_cast<const char*>(converter.toUTF8_s().c_str()), 0, &face->face)) {
+			if (FT_New_Face(c_library, reinterpret_cast<const char*>(converter.toUTF8_s().c_str()), faceIndex, &face->face)) {
 				if (logger) logger->log(L"CGUITTFont", L"FT_New_Face failed.", irr::ELL_INFORMATION);
 
 				c_faces.remove(filename);
